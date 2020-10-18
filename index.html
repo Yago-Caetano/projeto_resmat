@@ -78,18 +78,20 @@
             </div>
         </div>
     
-        <div>
-            <div>
-                Forcas Aplicadas
+        <div id="forces-containner" style="position: absolute;left: 4vw; top: 24vh;background-color: rgb(255,255,255,0.8);
+                                             padding: 16px;border-radius: 12px;">
+            <div style="border:1px solid black; border-radius: 8px;padding-left: 8px; padding-right: 8px;">
+
+                <p style="text-align: center; font-size: larger; font-weight: bold;">Forcas Aplicadas</p>
                 <ul id="forces-list" style="list-style-type: none; height: 8vh;overflow-y: auto;">
-    
                 </ul>
             </div>
-    
-            <div>
-                Forças Calculadas
+
+            <div style="margin-top:8px; border:1px solid black; border-radius: 8px; padding-left: 8px; padding-right: 8px;" >
+                <p style="text-align: center; font-size: larger; font-weight: bold;">Forças Calculadas</p>
                 <ul id="point-list" style="list-style: none;">
                 </ul>
+
             </div>
         </div>
         
@@ -227,8 +229,6 @@
 
     .controller-container button{
         width: 80%;
-
-    
     }
 
     .forca-container{
@@ -236,6 +236,7 @@
         flex-direction: row;
     }
 
+ 
     .force-details-container{
         display: flex;
         flex-direction: column;
