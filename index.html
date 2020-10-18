@@ -1,0 +1,1330 @@
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.2.0/math.min.js" integrity="sha512-4VdpCxbABk7wjJb/9z/d3EyibeHwUY0FgHbFO4EiIPVtyyV6llhENCvzRk8SH5D86+Jwm6QLagqRRnEJCd3gJg==" crossorigin="anonymous"></script>
+
+<script src="./calulos.js"></script>
+<script src="gauss-jordan.js"></script>
+
+<body onload="init()">
+    <div class="main-container">
+
+
+        <div class="canvas-container">
+            <img id="apoioFixoImg-test" src="apoio_fixo.png" style="display: none;"/>
+
+            <img id="apoioMovelImg-test" src="apoio_movel.png" style="display: none;"/>
+        
+                <canvas id="canvas-1" style="position: absolute; left: 25vw; top: 4vh; background-color: white; ">
+
+                </canvas>
+
+                <canvas id="canvas-workspace" style="border:1px solid #000000; background-color: transparent;
+                -webkit-box-shadow: 10px 10px 22px 0px rgba(0,0,0,0.25);
+                -moz-box-shadow: 10px 10px 22px 0px rgba(0,0,0,0.25);
+                box-shadow: 10px 10px 22px 0px rgba(0,0,0,0.25);
+                
+                position: absolute; left: 25vw; top: 4vh; z-index: 1; z-index: 1;"
+                >
+        
+                </canvas>
+
+         
+        </div>       
+       
+        <div class="controller-container">
+
+            <div id="insert-point-containner">
+                <p style="margin-left: 8px;margin-right: 8px;">Inserir Pontos</p>
+                <label for="select-input-mode">Modo de localização</label>
+                <select id="select-input-mode">
+                    <option value="polar">Polar</option>
+                    <option value="incremental">Incremental</option>
+                </select>
+    
+                <input id="distance-input" type="number" placeholder="Distancia"></input>
+                <input id="angle-input" type="number" placeholder="Angulo"></input>
+                <label for="pontos-de-referencia">Ponto de origem</label>
+                <select id="pontos-de-referencia"></select>
+            
+                <button id="btn-insert-point">Inserir ponto</button>
+
+            </div>
+
+            <div>
+                <p>Grade</p>
+                <input id="grid-distance" type="number" placeholder="Largura dos quadros"></input>
+                <button id="btn-draw-grids">Redesenhar Grid</button>
+            </div>
+
+            <button id="btn-fixed-support">Inserir apoios</button>
+            <button id="btn-forca">Inserir força</button>
+        
+
+
+            <div> <button id="btn-calcular">Calcular</button></div>
+            <div>
+                Forcas Aplicadas
+                <ul id="forces-list" style="list-style-type: none; height: 8vh; overflow-y: auto;">
+    
+                </ul>
+            </div>
+    
+            <div>
+                Forças Calculadas
+                <ul id="point-list" style="list-style: none;">
+                </ul>
+            </div>
+        </div>
+    
+    
+        
+    
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+            <span id="close" class="close">&times;</span>
+
+                    <div>
+                        <p id="text-modal"></p>
+                        <input style="display: none;" id="input-distance" type="number" placeholder="Distancia entre apoios"></input>
+            
+                        <select id="select-available-points" placeholder="Pontos disponiveis" style="display: none;">
+                    
+                        </select>
+                    </div>
+                
+              
+                <div id="auto-insertion-container">
+                    <label for="cb-distancia-auto">Inserção Automático</label>
+                    <input type="checkbox" id="cb-distancia-auto" checked="true"></input>
+                </div>
+ 
+                <div id="forca-container" style="display: flex; flex-direction: row;justify-content: space-around;">
+                    <div>
+                        <ul style="list-style-type: none;padding: 16px;">
+                            <li><label for="select-point">Ponto desejado</label></li>
+                            <li><select id="select-point"></select></li>
+                            <li><input placeholder="Intensidade (kN)" id="input-intensidade" type="number"></input></li>
+                            <li><input placeholder="Angulo" id="input-angulo-forca" type="number"></input></li>
+                        </ul>
+                    </div>
+        
+                    <div>
+                        <p>Preview</p>
+                        <canvas id="canvas-preview" style="border:1px solid #000000;">
+    
+                        </canvas>
+                    </div>
+                </div>
+            
+                <button id="btConfirmarDistancia">Confirmar</button>
+            </div>
+        </div>
+
+
+    </div>
+</body>
+
+<style>
+
+    body{
+        background: #bae1ff;
+    }
+
+    header{
+        margin-top: 16px;
+        font-size: 2em;
+        margin-bottom: 16px;
+    }
+
+    button{
+        padding: 8px;
+        background: #f7f7f7;
+    }
+
+    .controller-container{
+        margin-top: 16px;
+        margin-bottom: 16px;
+    }
+    
+    /* The Modal (background) */
+    .modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+
+    /* Modal Content/Box */
+    .modal-content {
+    background-color: #fefefe;
+    margin-top: 8%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%; /* Could be more or less, depending on screen size */
+    }
+
+    /* The Close Button */
+    .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    }
+
+    .main-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .controller-container{
+        position: absolute;
+        left: 82vw; top: 4vh;
+        background-color: white;
+        margin: 16px;
+        padding: 8px;
+    }
+
+    .controller-container button{
+        width: 80%;
+
+    
+    }
+
+    .forca-container{
+        display: flex;
+        flex-direction: row;
+    }
+
+    .force-details-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .insert-point-containner p,input,label,select,button{
+        margin-bottom: 8px;
+        margin-left: 8px;
+        margin-right: 8px;
+    }
+
+
+  
+
+</style>
+
+
+<script>
+
+    class point{
+        ligacoes = []
+        forcasExternas = []
+        constructor(coordX,coordY,name,apoioFixo,apoioMovel)
+        {
+            this.coordX = coordX;
+            this.coordY = coordY;
+            this.name = name;
+            this.apoioFixo = apoioFixo;
+            this.apoioMovel = apoioMovel;
+        }
+
+        inserirLigacao(ponto)
+        {
+            this.ligacoes.push(ponto);
+        }
+
+        inserirForca(vetor)
+        {
+            this.forcasExternas.push(vetor);
+        }
+        
+    }
+
+
+    class line{
+
+        constructor(startX,startY,endX,endY,startPoint,EndPoint)
+        {
+            this.startX = startX;
+            this.startY = startY;
+            this.endX = endX;
+            this.endY = endY;
+            this.tipoPerfil = 'quadrado';
+            this.forca = 0;
+            this.deformacaoLong = 0;
+            this.deformcaoTrans = 0;
+            this.largura = 0;
+            this.tensaoElastica = 0;
+            this.tensaoRuptura = 0;
+            this.Elasticidade = 0;
+            this.coefV = 0;
+            this.EndPoint = EndPoint;
+            this.startPoint = startPoint;
+        }
+    }
+
+    class vector{
+        constructor(intensidade,angulo,sentido)
+        {
+            this.i = (intensidade*math.cos(((angulo*math.PI)/180)));
+            this.j = (intensidade*math.sin(((angulo*math.PI)/180)));
+            this.modulo = intensidade;
+            this.angulo = ((angulo*Math.PI)/180);
+            this.sentido = sentido;
+        }
+    }
+
+    var count = 0;
+    var distancia = 0;
+    var angulo = 0;
+    var lastPoint = 0x40;
+
+    var escala = 1;
+    var gridScale = 1;
+    var flagApoiosInseridos = false;
+    var c,ctx,canvas1,ctx1,apoioFixoImg,apoioMovelImg
+
+    var manualInsertionParams = {
+        enabled:false,
+        firstPointInserted:false,
+        firstPointX: 0,
+        lastPointX:0
+    }
+
+    const points = [];
+    const lines = [];
+    const vetores = [];
+    const ImgSize = {x:50,y:50}
+    const raio = 8;
+
+    var yOffset = 0;
+    var inputMode = "polar";
+
+    const CanvasWidth  = (window.innerHeight)*0.92;
+
+    const CanvasHeigth =   (CanvasWidth);
+
+
+
+    function init()
+    {
+        c = document.getElementById("canvas-workspace");
+        ctx = c.getContext("2d");
+
+
+        c1 = document.getElementById("canvas-1");
+        ctx1 = c1.getContext("2d");
+
+        
+        ctx.canvas.width  = CanvasWidth;
+        ctx.canvas.height = CanvasHeigth;
+
+        ctx1.canvas.width  = CanvasWidth;
+        ctx1.canvas.height = CanvasHeigth;
+
+        apoioFixoImg = document.getElementById("apoioFixoImg-test");
+        apoioMovelImg = document.getElementById("apoioMovelImg-test")
+
+        var button = document.getElementById('btn-insert-point');
+        var buttonInsertFixed = document.getElementById('btn-fixed-support');
+        var buttonCalcular = document.getElementById("btn-calcular");
+        var buttonInserirForca = document.getElementById("btn-forca");
+        var buttonRedraw = document.getElementById("btn-draw-grids");
+        var gridDistance = document.getElementById("grid-distance");
+
+    
+
+
+        //input mode
+        var selectInputMode = document.getElementById("select-input-mode");
+
+        selectInputMode.onchange = function(event){
+
+            inputMode = event.target.value;
+
+            distanceInput = document.getElementById("distance-input");
+            anguleInput = document.getElementById("angle-input");
+
+            distanceInput.value = "";
+            anguleInput = "";
+
+            if(inputMode === "polar")
+            {
+                distanceInput.placeholder = "Distancia";
+                anguleInput.placeholder = "Angulo";
+            }
+            else{
+                distanceInput.placeholder = "Distancia X";
+                anguleInput.placeholder = "Distancia Y";
+            }
+        }
+
+
+        button.onclick = function(){
+            //valida os campos de distancia e angulo
+            var angule = document.getElementById('angle-input').value;
+            var distance = document.getElementById('distance-input').value;
+            var originPoint = document.getElementById('pontos-de-referencia').value;
+
+            if(inputMode === "polar")
+            {
+                if((angule) && (angule>=0) && (angule<=360))
+                {
+                    if(distance)
+                    {
+                        if(originPoint)
+                        {
+                            //get point
+                            selectedPoint = getPointFromName(originPoint);
+                            
+                            //calculate coords
+                            xCoord = ((escala*(distance*math.cos(((angule*math.PI)/180))) + selectedPoint.coordX));
+                            yCoord = ((escala*(distance*math.sin(((angule*math.PI)/180))) - selectedPoint.coordY));
+
+                            if(yCoord < 0)
+                            {
+                                yCoord*=-1;
+                            }
+
+                            realizaLigação(selectedPoint.name,insertPoint(xCoord,yCoord,false,false));
+
+                        }
+                        else{
+                            alert("Selecione uma origem válida");
+                        }
+                    }
+                    else{
+                        alert("Insira uma distância válida");
+                    }
+                }
+                else{
+                    alert("Insira um valor de ângulo válido");
+                }
+            }
+            else //modo incremental
+            {
+                if(angule)
+                {
+
+                    if(distance)
+                    {
+
+                        if(originPoint)
+                        {
+                            //get point
+                            selectedPoint = getPointFromName(originPoint);
+                            
+                            //calculate coords
+                            xCoord = ((escala*(distance) + selectedPoint.coordX));
+                            yCoord = ((escala*(angule) - selectedPoint.coordY));
+
+                            if(yCoord < 0)
+                            {
+                                yCoord*=-1;
+                            }
+
+                            realizaLigação(selectedPoint.name,insertPoint(xCoord,yCoord,false,false));
+
+                        }
+                        else{
+                            alert("Selecione uma origem válida");
+                        }
+
+                    }
+                    else
+                    {
+                        alert("Insira uma distância X válida");
+                    }
+
+
+                }
+                else{
+                    alert("Insira uma distância Y válida");
+                }
+            }
+
+        };
+
+        buttonCalcular.onclick = function(){
+
+
+
+            retorno = true;
+            //verifica se os pontos possuem conexões em aberto
+            points.forEach(point=>{
+                
+                if(((point.ligacoes.length <= 1) && (!point.apoioFixo && !point.apoioMovel)) || (point.ligacoes.length == 0))
+                {
+                    alert(`O ponto ${point.name} não possui conexões suficientes`);
+                    retorno = false;
+                }
+            })
+            if(!retorno)
+            {
+                return;
+            }
+
+
+            //verfica se é possivel montar a matriz
+            if((lines.length+3) <= (points.length*2))
+            {
+                //Faz o calculo da matriz
+                resultadoCalculo = calculo(lines,points,escala);
+                drawReactions(resultadoCalculo);
+
+                showForces(resultadoCalculo);
+
+                drawSubitules();
+
+            }
+            else{
+                
+                alert('A treliça desenhada não é isoestática');
+            }
+        }
+
+
+
+        buttonInsertFixed.onclick = function(){showModalDistancia()};
+
+
+        c.addEventListener("mousedown", function (e) {
+
+            if(!manualInsertionParams.enabled)
+            {
+                pontoVerificado = verificaClickNoPonto(e);
+
+                if(pontoVerificado.estaContido)
+                {
+                    showModalPoint(pontoVerificado.point);
+                }
+                else{
+
+                    if(flagApoiosInseridos)
+                    {
+                        var m = confirm("Deseja Inserir o ponto?");
+                        if(m)
+                        {
+                            showModalPoint(insertPoint((e.clientX - c.offsetLeft),((e.clientY - c.offsetTop)+yOffset)));
+                        }
+                    }
+                    else{
+                        alert("É necessário inserir os apoios antes");
+                    }
+                }
+            }
+            else{
+                //cadastrando apoios de forma manual
+                if(!manualInsertionParams.firstPointInserted)
+                {
+                    manualInsertionParams.firstPointX =  (e.clientX - c.offsetLeft);
+                    manualInsertionParams.firstPointInserted = true;
+
+                    alert("Selecione na tela a posição do segundo ponto de apoio");
+
+                }
+                else{
+                    manualInsertionParams.lastPointX = (e.clientX - c.offsetLeft);
+                    manualInsertionParams.enabled = false;
+                    flagApoiosInseridos = true;
+
+                    //libera os botões
+                     button.disabled = false;
+                     buttonCalcular.disabled = false;
+                     buttonInserirForca.disabled = false;
+                     buttonRedraw.disabled = false;
+                     gridDistance.disabled = false;
+
+                    drawSupportPoint(manualInsertionParams);
+                }
+            }
+            
+          
+           
+        }, false);
+
+        buttonInserirForca.onclick = function(){
+            showModalForca();
+        }
+
+
+        //botão de redesenhar grid
+        buttonRedraw.onclick = function(){
+
+            //gridDistance
+            if((gridDistance.value) && (gridDistance.value>0))
+            {
+                gridScale = gridDistance.value;
+                drawGrids();
+
+            }
+            else{
+                alert("Insira uma distancia válida");
+            }
+
+        }
+        
+        //atualiza o offset da altura
+        window.onscroll = function(e) {
+            yOffset = document.body.scrollTop;
+        };
+    }
+
+
+    function showForces(resultadoCalculo)
+    {
+            //insert point in list
+        var ul = document.getElementById("point-list");
+    
+
+        for(var b = 0; b < resultadoCalculo[0].length;b++)
+        {
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(`F${resultadoCalculo[0][b]} = ${resultadoCalculo[1][b]} N`));
+            ul.appendChild(li);
+        }
+
+        
+    }
+
+    function drawReactions(resultadoCalculado)
+    {
+        //preenche as linhas com as respectivas forcas
+        for(var d = 3; d < resultadoCalculado[0].length; d++)
+        {
+           canvas = document.getElementById("canvas-workspace");
+           mctx = canvas.getContext("2d");
+           mctx.beginPath();
+           nomeDaReacao = resultadoCalculado[0][d].substring(0,2);
+           
+            lines.map(line =>{
+                if((nomeDaReacao.indexOf(line.startPoint.name) >= 0) && (nomeDaReacao.indexOf(line.EndPoint.name) >= 0))
+                {
+                    line.forca = resultadoCalculado[1][d];
+
+                    //alterar a linha desenhada
+                    mctx.moveTo(line.startPoint.coordX,line.startPoint.coordY);
+                    mctx.lineTo(line.EndPoint.coordX, line.EndPoint.coordY);
+
+                    if(line.forca > 0) //tracao azul
+                    {
+                        mctx.strokeStyle = "blue";
+
+                    }
+                    else{
+                        mctx.strokeStyle = "green";
+                    }
+                    
+                    mctx.stroke();
+                    mctx.strokeStyle = "black";
+
+
+
+                }
+            })
+
+        }
+    }
+
+
+    function drawGrids(){
+
+        debugger;
+
+        limitX = CanvasWidth;
+        stCordY = CanvasHeigth;
+        passo = (gridScale*escala);
+        
+        startX = 0;
+
+        if(points[0]) //se o ponto A já foi cadastrado
+        {
+            startX = points[0].coordX;
+
+        }
+        else{
+
+            startX = limitX*0.375
+        }
+        startY = (stCordY-ImgSize.y)
+
+
+        clearCanvas(ctx1,c1);
+
+        //desenhar linha em "A"
+        ctx1.moveTo(startX , 0);
+        ctx1.lineTo(startX, stCordY);
+
+
+        //linhas para a direita do ponto A
+        for (var x = startX; x <= limitX; x += passo){
+            ctx1.moveTo(x + passo , 0);
+            ctx1.lineTo(x + passo, stCordY);
+        }
+
+        //linhas para a esquerda do ponto A
+        for (var x = startX; x >= 0; x -= passo){
+            ctx1.moveTo(x - passo , 0);
+            ctx1.lineTo(x - passo, stCordY);
+        }
+
+
+        //linhas abaixo de A
+        for (var x = startY; x <= CanvasHeigth; x += passo) {
+            ctx1.moveTo(0, x + passo);
+            ctx1.lineTo((limitX),x + passo);
+        }
+
+         //linhas acima de A
+         for (var x = startY; x >= 0; x -= passo) {
+            ctx1.moveTo(0, x);
+            ctx1.lineTo((limitX),x);
+        }
+
+        ctx1.strokeStyle = "black";
+        ctx1.lineWidth = 0.2;
+        ctx1.stroke();
+    }
+
+
+    function getPointFromName(name)
+    {
+        returnedPoint = null;
+        points.forEach(point=>{
+            if(point.name === name)
+            {
+                returnedPoint = point;
+                return;
+            }
+        })
+
+        return returnedPoint;
+    }
+
+    function verificaClickNoPonto(e)
+    {
+        posXClicked = e.clientX - c.offsetLeft;
+        posYClicked = e.clientY - c.offsetTop;
+
+        //insere o ofsset de scroll
+        posYClicked+=yOffset;
+
+        console.log(`Clicou: ${posXClicked} - ${posYClicked}`);
+
+        retornoDaFuncao = {
+            estaContido: false,
+            point: null
+        }
+
+        points.forEach(point => {
+            //Verificar no eixo X
+            if((point.coordX+raio >= posXClicked) && (point.coordX-raio <= posXClicked))
+            {
+                if((point.coordY+raio >= posYClicked) && (point.coordY-raio <= posYClicked))
+                {
+                    retornoDaFuncao.estaContido = true;
+                    retornoDaFuncao.point = point;
+                }
+            }
+        });
+
+        return retornoDaFuncao;
+    }
+
+
+    function drawPoint(ponto)
+    {
+        ctx.beginPath();
+        ctx.arc(ponto.coordX, ponto.coordY, raio, 0, 2 * Math.PI, true);
+        ctx.stroke();
+        ctx.fillStyle = "black";
+        ctx.fill();
+
+        ctx.font = "24px Arial";
+        ctx.fillStyle = "red";
+        ctx.fillText(ponto.name, (ponto.coordX+raio), (ponto.coordY+raio));
+
+    }
+
+    function drawSubitules()
+    {
+        //desenhar o box azul
+        x = (CanvasHeigth/96)
+        y = CanvasHeigth-(2*CanvasHeigth/48);
+
+        ctx.beginPath();
+        ctx.rect(x,y,(CanvasHeigth/48),(CanvasHeigth/48));
+        ctx.fillStyle = "blue";
+        ctx.fill();
+
+        ctx.font = "16px Arial";
+        ctx.fillText("Tração",x + 1.5*(CanvasHeigth/48),y+(CanvasHeigth/48));
+
+
+        //desenhar o box verde
+
+        y -= 2*(CanvasHeigth/48);
+    
+
+        ctx.beginPath();
+        ctx.fillStyle = "green";
+        ctx.rect(x,y,(CanvasHeigth/48),(CanvasHeigth/48));
+        ctx.fill();
+
+        ctx.font = "16px Arial";
+        ctx.fillText("Compressão",x + 1.5*(CanvasHeigth/48),y+(CanvasHeigth/48));
+
+
+    }
+
+    function calculaEscala(distancia_apoios)
+    {
+        escala = ((points[1].coordX - points[0].coordX)/distancia_apoios);
+        console.log(`A escala atual é: ${escala}`);
+    }
+
+    function insertPoint(coordX,coordY,apoioFixo,apoioMovel)
+    {
+        console.log(`Insert Point -- X: ${coordX} -- Y:${coordY}`);
+        var ponto = new point(coordX,coordY,String.fromCharCode(++lastPoint),apoioFixo,apoioMovel);
+        drawPoint(ponto);
+
+        points.push(ponto);
+        
+        //insert point in list
+        var referenceSelect = document.getElementById("pontos-de-referencia");
+        var option = document.createElement("option");
+        option.appendChild(document.createTextNode(`${ponto.name}`));
+        referenceSelect.appendChild(option);
+
+         //insert point in list
+         var referenceSelect = document.getElementById("select-point");
+        var option = document.createElement("option");
+        option.appendChild(document.createTextNode(`${ponto.name}`));
+        referenceSelect.appendChild(option);
+
+
+        return ponto;
+    }
+
+    function drawLine(startX,startY,endX,endY,startPoint,EndPoint){
+    
+        ctx.beginPath();
+        ctx.strokeStyle = "black";
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX,endY);  // 2x^2 + 4x + 2 = 75
+
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        lines.push(new line(startX,startY,endX,endY,startPoint,EndPoint));
+
+
+        /*const a = [[3, 2,-1], [1,3,1], [2,2,-2]]; //3x^2 + 2x -1 = 0;  1x^2 + 3x +1 = 1; 2x^2 + 2x - 2 = 2
+        const b = [0,1,2];
+        const x = math.lusolve(a, b);*/
+
+    }
+
+
+    function showModalForca(){
+        
+        resetModal();
+
+        var modal = document.getElementById("myModal");
+
+        var buttonConfirmar = document.getElementById("btConfirmarDistancia");
+        var intensidadeInput = document.getElementById("input-intensidade");
+        var anguloInput = document.getElementById("input-angulo-forca");
+        var selectPoint = document.getElementById("select-point");
+
+        var canvas = document.getElementById("canvas-preview");
+        contexto = canvas.getContext("2d");
+
+        contexto.canvas.width  = (CanvasWidth/2);
+        contexto.canvas.height = (CanvasHeigth/2);
+
+        document.getElementById("text-modal").innerHTML = "Inserir Força";
+        document.getElementById("forca-container").style.display = "flex";
+
+
+        modal.style.display = "block";
+
+         // When the user clicks anywhere outside of the modal, close it
+         window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        
+        //on click "x" icon
+        document.getElementById("close").onclick = function()
+        {
+            modal.style.display = "none";
+        }
+
+        anguloInput.onchange = function(e){
+
+            clearCanvas(contexto,canvas);
+
+
+            y = ((contexto.canvas.height/3)*math.sin(((e.target.value*math.PI)/180)))-(contexto.canvas.height/2);
+            x =  ((contexto.canvas.height/3)*math.cos(((e.target.value*math.PI)/180)))+(contexto.canvas.width/2);
+
+            if(y<0)
+            {
+                y*=-1;
+            }
+
+            canvas_arrow(contexto,(contexto.canvas.width/2),(contexto.canvas.height/2),x,y);
+
+            contexto.stroke();
+        }
+
+        buttonConfirmar.onclick = function(){
+
+            if(anguloInput.value)
+            {
+                if(selectPoint.value)
+                {
+                    if((intensidadeInput.value) && !(intensidadeInput.value < 0))
+                    {
+                        vetor = new vector(intensidadeInput.value,anguloInput.value)
+                        ponto = getPointFromName(selectPoint.value);
+                        ponto.inserirForca(vetor);
+
+                        for(a = 0;a < points.length;a++)
+                        {
+                            if(points[a].name === ponto.name)
+                            {
+                                points[a] = ponto;
+                            }
+                        }
+
+                        debugger;
+
+                        pontoFinalX = (ponto.coordX+(Math.cos(vetor.angulo) * CanvasWidth*0.08 ));
+                        pontoFinalY = (ponto.coordY+(Math.sin(vetor.angulo*(-1))* CanvasWidth*0.08));
+
+                        offsetX = false;
+                        offsetY = false;
+
+                        //verifica se é necessário dar o offset
+                        ponto.ligacoes.map(pontoFinal => {
+
+
+                            tangenteLinha = parseFloat(((pontoFinalY-ponto.coordY)/(pontoFinalX - ponto.coordX)).toFixed(3));
+                            tangenteLigacao = parseFloat(((pontoFinal.coordY-ponto.coordY)/(pontoFinal.coordX-ponto.coordX)).toFixed(3));
+
+                            tangenteLigacaoOposta = parseFloat(((pontoFinal.coordX-ponto.coordX)/(pontoFinal.coordY-ponto.coordY)).toFixed(3));
+
+
+                            if((tangenteLigacao === tangenteLinha) || (tangenteLigacaoOposta === tangenteLinha))
+                            {
+                                //verifica se o sentido é o mesmo
+                                if((((ponto.coordY-pontoFinalY) <= 0 && (ponto.coordY - pontoFinal.coordY) <= 0) || 
+                                    ((ponto.coordY-pontoFinalY) >= 0 && (ponto.coordY - pontoFinal.coordY) >= 0)) &&
+                                    (((ponto.coordX-pontoFinalX) >= 0 && (ponto.coordX - pontoFinal.coordX) >= 0) ||
+                                     ((ponto.coordX-pontoFinalX) <= 0 && (ponto.coordX - pontoFinal.coordX) <= 0) ))
+                                     {
+                                       
+                                        //offset apenas para angulos de 0, 90, 180 e 270
+                                        
+                                        if((tangenteLinha === 0) || (tangenteLinha === -0))
+                                        {
+                                            offsetX = true;    
+                                        }
+                                        else if((tangenteLinha === -Infinity) || (tangenteLinha === Infinity))
+                                        {
+                                            offsetY = true;
+                                        }
+
+
+                                     }
+                            }
+
+                            //close modal
+                            modal.style.display = "none";
+
+                        })
+
+                        //desenha na tela o vetor forca
+                        ctx.beginPath();
+
+                        if(offsetX)
+                        {
+
+                            pontoFinalX = (ponto.coordX-(Math.cos(vetor.angulo) * CanvasWidth*0.08 ));
+                            pontoFinalY = (ponto.coordY-(Math.sin(vetor.angulo*(-1))* CanvasWidth*0.08));
+
+                            canvas_arrow(ctx,pontoFinalX,pontoFinalY,ponto.coordX,ponto.coordY);
+
+                        }
+                        else if(offsetY)
+                        {
+                            pontoFinalX = (ponto.coordX-(Math.cos(vetor.angulo) * CanvasWidth*0.08 ));
+                            pontoFinalY = (ponto.coordY-(Math.sin(vetor.angulo*(-1))* CanvasWidth*0.08));
+
+                            canvas_arrow(ctx,pontoFinalX,pontoFinalY,ponto.coordX,ponto.coordY);
+                        }
+                        else{
+
+                            canvas_arrow(ctx,ponto.coordX,ponto.coordY,pontoFinalX,pontoFinalY);
+                        }
+
+                        ctx.strokeStyle = "red";
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+
+                        debugger;
+                        ctx.fillStyle = "#330033";
+                        ctx.font = "20px Arial";
+
+                        tamanhoTxt = {
+                            width:ctx.measureText(intensidadeInput.value).width,
+                        }
+
+                        //coordenadas para inserir texto de apoio
+                        valX = (ponto.coordX + (((pontoFinalX - ponto.coordX) - (tamanhoTxt.width))/2));
+                        valY = ponto.coordY + (((pontoFinalY - ponto.coordY)/2) + 5);
+                   
+                        ctx.fillText(intensidadeInput.value,valX ,valY);
+
+                        
+                        //insere força no list
+                        var ul = document.getElementById("forces-list");
+                        var li = document.createElement("li");
+                        li.appendChild(document.createTextNode(`Ponto: ${ponto.name} - Intensidade ${intensidadeInput.value} - ${anguloInput.value}°`));
+                        ul.appendChild(li);
+
+                    }
+                    else{
+
+                    } 
+                }
+                else{
+                    alert("Selecione um ponto");
+                }
+                  
+            }
+            else{
+                alert("Insira um angulo válido");
+            }
+
+        }
+
+    }
+
+    function clearCanvas(context, canvas) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        var w = canvas.width;
+        canvas.width = 1;
+        canvas.width = w;   
+    }
+
+
+    function canvas_arrow(context, fromx, fromy, tox, toy) {
+        var headlen = 10; // length of head in pixels
+        var dx = tox - fromx;
+        var dy = toy - fromy;
+        var angle = Math.atan2(dy, dx);
+        context.moveTo(fromx, fromy);
+        context.lineTo(tox, toy);
+        context.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+        context.moveTo(tox, toy);
+        context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+    }
+
+    function showModalDistancia(titulo,mensagem)
+    {
+
+        resetModal();
+        var modal = document.getElementById("myModal");
+
+        var buttonConfirmarDistancia = document.getElementById("btConfirmarDistancia");
+        document.getElementById("text-modal").innerHTML = "Insira a distancia entre os pontos";
+
+
+        modal.style.display = "block";
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        
+        //on click "x" icon
+        document.getElementById("close").onclick = function()
+        {
+            modal.style.display = "none";
+        }
+
+
+        //on click "x" icon
+        document.getElementById("close").onclick = function()
+        {
+            modal.style.display = "none";
+        }
+
+        var buttonSuport = document.getElementById("btn-fixed-support");
+        var distanceInput = document.getElementById("input-distance");
+
+        distanceInput.style.display = "block"
+
+
+        document.getElementById("auto-insertion-container").style.display = "block";
+        
+        var autoDistanceCB = document.getElementById("cb-distancia-auto");
+
+
+
+        buttonConfirmarDistancia.onclick = function(){
+        
+            debugger;
+            var valor = distanceInput.value;
+            if((valor) && (valor>0))
+            {
+
+                if(autoDistanceCB.checked)
+                {
+                    modal.style.display = "none";
+                    drawSupportPoint();
+                    buttonSuport.disabled = true;
+                    flagApoiosInseridos = true;
+                    calculaEscala(valor);
+                }
+                else{
+
+                    manualInsertionParams.enabled = true;
+                    manualInsertionParams.distanceInputed = valor;
+                    modal.style.display = "none";
+                    buttonSuport.disabled = true;
+                    drawAuxRect();
+
+                    //block buttons
+                    document.getElementById('btn-insert-point').disabled = true;
+                    document.getElementById('btn-fixed-support').disabled = true;
+                    document.getElementById("btn-calcular").disabled = true;
+                    document.getElementById("btn-forca").disabled = true;
+                    document.getElementById("btn-draw-grids").disabled = true;
+                    document.getElementById("grid-distance").disabled = true;
+
+                    alert("Selecione na tela a posição do primneiro ponto");
+
+                }
+        
+
+            }
+            else{
+                alert("Insira uma distância válida");
+            }   
+        }
+        
+    }
+
+
+    function drawAuxRect(){
+
+        ctx1.beginPath();
+
+        ctx1.rect(0,0,CanvasWidth,(CanvasHeigth-ImgSize.y));
+        ctx1.fill();
+    }
+
+
+
+    function showModalPoint(ponto){
+
+        resetModal();
+
+        var modal = document.getElementById("myModal");
+
+        var buttonConfirmarDistancia = document.getElementById("btConfirmarDistancia");
+        document.getElementById("text-modal").innerHTML = "Selecione as conexões do ponto";
+        document.getElementById("forca-container").style.display = "none";
+
+        buttonConfirmarDistancia.style.display = "block";
+        modal.style.display = "block";
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+        if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        
+        //on click "x" icon
+        document.getElementById("close").onclick = function()
+        {
+            modal.style.display = "none";
+        }
+
+        var buttonConfirmar = document.getElementById("btConfirmarDistancia");
+        var pointSelect = document.getElementById("select-available-points");
+
+        pointSelect.style.display = "block"
+
+        //insert point into modal points select
+        points.forEach(point =>{
+            
+            existeLigacao = false;
+
+            point.ligacoes.forEach(pontoLigado =>{
+
+                if(pontoLigado.name === ponto.name)
+                {
+                    existeLigacao = true;
+                }
+            })
+
+            if((!existeLigacao)&&(point.name !== ponto.name))
+            {
+                var option = document.createElement("option");
+                option.appendChild(document.createTextNode(`${point.name}`));
+                pointSelect.appendChild(option);
+            }
+     
+        })
+
+      
+
+        buttonConfirmar.onclick = function(){
+
+            modal.style.display = "none";
+
+            //relação entre os pontos
+            nomeDoPonto = pointSelect.value;
+
+            realizaLigação(nomeDoPonto,ponto);
+           
+
+        }
+    }
+
+    function realizaLigação(nomePontoOrigem,pontoNovo)
+    {
+           //encontra o ponto selecionado no dropdown
+            pontoSelecionado = null;
+            for(a = 0; a<points.length;a++)
+            {
+                if(points[a].name === nomePontoOrigem)
+                {
+                    pontoSelecionado = points[a];
+                    points[a].inserirLigacao(pontoNovo);
+                    break;
+                }
+            }
+
+            pontoNovo.inserirLigacao(pontoSelecionado);
+
+            //atualiza o ponto novo no array de pontos
+            for(a = 0; a<points.length;a++)
+            {
+                if(points[a].name === pontoNovo.name)
+                {
+                    points[a] = pontoNovo;
+                    break;
+                }
+            }
+
+            drawLine(pontoNovo.coordX,pontoNovo.coordY,pontoSelecionado.coordX,pontoSelecionado.coordY,pontoNovo,pontoSelecionado);
+    }
+
+    function drawSupportPoint(params)
+    {
+        debugger;
+
+        if(!params)
+        {
+            var janelaY = CanvasHeigth;
+            var janelaX = CanvasWidth;
+            //ponto de origem
+            //ctx.moveTo((janelaX*0.25),janelaY);
+
+            startImgX = ((janelaX*0.375)-((ImgSize.x)/2));
+            startImgY = (janelaY-ImgSize.y);
+
+            endImgX = ((janelaX*0.625)-((ImgSize.x)/2));
+
+
+            ctx.drawImage(apoioFixoImg,startImgX,startImgY,ImgSize.x,ImgSize.y);
+        
+            insertPoint((janelaX*0.375),startImgY,true);
+
+
+            //ponto final
+            ctx.moveTo(endImgX,(janelaY-ImgSize.y));
+            ctx.drawImage(apoioMovelImg,endImgX,startImgY,ImgSize.x,ImgSize.y);
+        
+            insertPoint((janelaX*0.625),startImgY,false,true);
+        }
+        else{
+            
+            startImgY = (CanvasHeigth-ImgSize.y);
+
+
+            ctx.drawImage(apoioFixoImg,(params.firstPointX-(ImgSize.x/2)),startImgY,ImgSize.x,ImgSize.y);
+        
+            insertPoint(params.firstPointX,startImgY,true);
+
+
+            //ponto final
+            ctx.moveTo(params.lastPointX,(janelaY-ImgSize.y));
+            ctx.drawImage(apoioMovelImg,(params.lastPointX-(ImgSize.x/2)),startImgY,ImgSize.x,ImgSize.y);
+        
+            insertPoint(params.lastPointX,startImgY,false,true);
+
+            calculaEscala(manualInsertionParams.distanceInputed);
+
+            clearCanvas(ctx1,c1);
+        }
+     
+    }
+
+    function setNewPoints()
+    {
+       let x =  (distancia * math.cos((angulo*math.PI)/180));
+       let y =  ((distancia*math.sin((angulo*math.PI)/180)) *(-1)); //correct y coordenations
+       return ([x,y]);
+    }
+
+
+    function resetModal()
+    {
+        document.getElementById("myModal").style.display = "none";
+        document.getElementById("input-distance").style.display = "none";
+        document.getElementById("select-available-points").style.display = "none";
+        document.getElementById("forca-container").style.display = "none";
+        document.getElementById("btConfirmarDistancia").onclick = null;
+        document.getElementById("auto-insertion-container").style.display = "none";
+        document.getElementById("auto-insertion-container").onclick = null;
+
+        const myNode = document.getElementById("select-available-points");
+
+        while (myNode.firstChild) {
+            myNode.removeChild(myNode.lastChild);
+        }
+    }
+  
+</script>
