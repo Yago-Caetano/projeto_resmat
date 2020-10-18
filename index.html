@@ -1,5 +1,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.2.0/math.min.js" integrity="sha512-4VdpCxbABk7wjJb/9z/d3EyibeHwUY0FgHbFO4EiIPVtyyV6llhENCvzRk8SH5D86+Jwm6QLagqRRnEJCd3gJg==" crossorigin="anonymous"></script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Chilanka&display=swap');
+    </style>
 
 <script src="./calulos.js"></script>
 <script src="gauss-jordan.js"></script>
@@ -13,11 +16,11 @@
 
             <img id="apoioMovelImg-test" src="apoio_movel.png" style="display: none;"/>
         
-                <canvas id="canvas-1" style="position: absolute; left: 25vw; top: 4vh; background-color: white; ">
+                <canvas id="canvas-1" style="position: absolute; left: 25vw; top: 4vh; background-color: white; border-radius: 24px;">
 
                 </canvas>
 
-                <canvas id="canvas-workspace" style="border:1px solid #000000; background-color: transparent;
+                <canvas id="canvas-workspace" style="border:1px solid #000000; background-color: transparent; border-radius: 24px;
                 -webkit-box-shadow: 10px 10px 22px 0px rgba(0,0,0,0.25);
                 -moz-box-shadow: 10px 10px 22px 0px rgba(0,0,0,0.25);
                 box-shadow: 10px 10px 22px 0px rgba(0,0,0,0.25);
@@ -32,8 +35,10 @@
        
         <div class="controller-container">
 
-            <div id="insert-point-containner">
-                <p style="margin-left: 8px;margin-right: 8px;">Inserir Pontos</p>
+            <div id="insert-point-containner" style="border: 1px black solid; 
+                    border-radius: 8px; display: flex; flex-direction: column;">
+
+                <p style="text-align: center; font-size: larger; font-weight: bold;">Inserir Pontos</p>
                 <label for="select-input-mode">Modo de localização</label>
                 <select id="select-input-mode">
                     <option value="polar">Polar</option>
@@ -45,22 +50,35 @@
                 <label for="pontos-de-referencia">Ponto de origem</label>
                 <select id="pontos-de-referencia"></select>
             
-                <button id="btn-insert-point">Inserir ponto</button>
+                <button id="btn-insert-point" style="margin-right: auto;
+                                             margin-left: auto; border-radius: 16px;">Inserir ponto</button>
 
             </div>
 
-            <div>
-                <p>Grade</p>
-                <input id="grid-distance" type="number" placeholder="Largura dos quadros"></input> 
-                <button id="btn-draw-grids">Redesenhar Grid</button>
+            <div style="border: 1px black solid; 
+                            border-radius: 8px; display: flex; flex-direction: column;margin-top: 8px;">
+                <p style="text-align: center; font-weight: bold; font-size: larger;">Grade</p>
+                
+                <input id="grid-distance" type="number" placeholder="Largura dos quadros" ></input> 
+
+                <button id="btn-draw-grids" style="margin-right: auto;
+                             margin-left: auto; border-radius: 16px;margin-top: 8px;">Redesenhar Grid</button>
             </div>
 
-            <button id="btn-fixed-support">Inserir apoios</button>
-            <button id="btn-forca">Inserir força</button>
-        
+            <div style="display: flex;flex-direction: column;">
+                    <button id="btn-fixed-support"  style="margin-right: auto;
+                    margin-left: auto; margin-top:8px; border-radius: 16px;">Inserir apoios</button>
 
+                    <button id="btn-forca"  style="margin-right: auto;
+                         margin-left: auto;margin-top: 8px; border-radius: 16px;">Inserir força</button>
 
-            <div> <button id="btn-calcular">Calcular</button></div>
+                    <button id="btn-calcular" style="margin-right: auto;
+                        margin-left: auto;margin-top: 8px; border-radius: 16px;">Calcular</button>
+
+            </div>
+        </div>
+    
+        <div>
             <div>
                 Forcas Aplicadas
                 <ul id="forces-list" style="list-style-type: none; height: 8vh;overflow-y: auto;">
@@ -74,8 +92,6 @@
                 </ul>
             </div>
         </div>
-    
-    
         
     
         <!-- The Modal -->
@@ -127,9 +143,14 @@
 
 <style>
 
-    body{
-        background: #bae1ff;
+    *{
+        font-family: 'Chilanka', cursive;
     }
+
+    body{
+        background: #2e7d32;
+    }
+
 
     header{
         margin-top: 16px;
@@ -142,10 +163,11 @@
         background: #f7f7f7;
     }
 
-    .controller-container{
-        margin-top: 16px;
-        margin-bottom: 16px;
+    button:hover{
+        color: white;
+        background: #2e7d32;
     }
+
     
     /* The Modal (background) */
     .modal {
@@ -196,10 +218,11 @@
 
     .controller-container{
         position: absolute;
-        left: 82vw; top: 4vh;
-        background-color: white;
-        margin: 16px;
+        left: 78vw; top: 4vh;
+        background-color: rgba(255, 255, 255,0.8);
+        border-radius: 12px;
         padding: 8px;
+        margin-right: 16px;
     }
 
     .controller-container button{
@@ -767,7 +790,7 @@
     {
         //desenhar o box azul
         x = (CanvasHeigth/96)
-        y = CanvasHeigth-(2*CanvasHeigth/48);
+        y = (2*CanvasHeigth/48);
 
         ctx.beginPath();
         ctx.rect(x,y,(CanvasHeigth/48),(CanvasHeigth/48));
@@ -780,7 +803,7 @@
 
         //desenhar o box verde
 
-        y -= 2*(CanvasHeigth/48);
+        y += 2*(CanvasHeigth/48);
     
 
         ctx.beginPath();
