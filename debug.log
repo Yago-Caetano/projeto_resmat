@@ -1,1 +1,5 @@
 [1016/192524.767:ERROR:directory_reader_win.cc(43)] FindFirstFile: O sistema não pode encontrar o caminho especificado. (0x3)
+[1018/095431.710:ERROR:process_reader_win.cc(151)] SuspendThread: Acesso negado. (0x5)
+[1018/095431.770:ERROR:exception_snapshot_win.cc(99)] thread ID 19992 not found in process
+[1018/095431.770:ERROR:scoped_process_suspend.cc(40)] NtResumeProcess: Tentou-se acessar um processo de saída. (0xc000010a)
+[1018/141548.711:ERROR:directory_reader_win.cc(43)] FindFirstFile: O sistema não pode encontrar o caminho especificado. (0x3)
