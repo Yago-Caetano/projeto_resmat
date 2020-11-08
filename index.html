@@ -1,9 +1,10 @@
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.2.0/math.min.js" integrity="sha512-4VdpCxbABk7wjJb/9z/d3EyibeHwUY0FgHbFO4EiIPVtyyV6llhENCvzRk8SH5D86+Jwm6QLagqRRnEJCd3gJg==" crossorigin="anonymous"></script>
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Chilanka&display=swap');
-    </style>
-
+<style>@import url('https://fonts.googleapis.com/css2?family=Chilanka&display=swap');</style>
 <script src="./calulos.js"></script>
 <script src="gauss-jordan.js"></script>
 
@@ -34,8 +35,7 @@
        
         <div class="controller-container">
 
-            <div id="insert-point-containner" style="border: 1px black solid; 
-                    border-radius: 8px; display: flex; flex-direction: column;">
+            <div class="insert-point-containner">
 
                 <p style="text-align: center; font-size: larger; font-weight: bold;">Inserir Pontos</p>
                 <label for="select-input-mode">Modo de localização</label>
@@ -54,8 +54,7 @@
 
             </div>
 
-            <div style="border: 1px black solid; 
-                            border-radius: 8px; display: flex; flex-direction: column;margin-top: 8px;">
+            <div class="grid-container">
                 <p style="text-align: center; font-weight: bold; font-size: larger;">Grade</p>
                 
                 <input id="grid-distance" type="number" placeholder="Largura dos quadros" ></input> 
@@ -64,15 +63,12 @@
                              margin-left: auto; border-radius: 16px;margin-top: 8px;">Redesenhar Grid</button>
             </div>
 
-            <div style="display: flex;flex-direction: column;">
-                    <button id="btn-fixed-support"  style="margin-right: auto;
-                    margin-left: auto; margin-top:8px; border-radius: 16px;">Inserir apoios</button>
+            <div class="buttons-container">
+                    <button id="btn-fixed-support">Inserir apoios</button>
 
-                    <button id="btn-forca"  style="margin-right: auto;
-                         margin-left: auto;margin-top: 8px; border-radius: 16px;">Inserir força</button>
+                    <button id="btn-forca">Inserir força</button>
 
-                    <button id="btn-calcular" style="margin-right: auto;
-                        margin-left: auto;margin-top: 8px; border-radius: 16px;">Calcular</button>
+                    <button id="btn-calcular">Calcular</button>
 
             </div>
         </div>
@@ -125,8 +121,7 @@
     </div>
 
             
-    <div id="forces-containner" style="background-color: rgb(255,255,255,0.8);
-    padding: 16px;border-radius: 12px;">
+    <div class="forces-containner">
         <div style="border:1px solid black; border-radius: 8px;padding-left: 8px; padding-right: 8px;">
 
         <p style="text-align: center; font-size: larger; font-weight: bold;">Forcas Aplicadas</p>
@@ -185,7 +180,48 @@
             align-items: center;
             justify-content: space-between;
         }
+
+        .controller-container{
+            background-color: rgba(255, 255, 255,0.8);
+            border-radius: 12px;
+            padding: 8px;
+            margin-right: 16px;
+        }
+
+        .controller-container button{
+            width: 80%;
+        }
+
+        .insert-point-containner{
+
+            border: 1px black solid; 
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .grid-container{
+            border: 1px black solid; 
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            margin-top: 8px;
+        }
+
+        .buttons-container{
+            display: flex;
+            flex-direction: column;
+        }
+
+        .buttons-container button{
+            margin-right: auto;
+            margin-left: auto;
+            margin-top:8px;
+            border-radius: 16px;
+        }
+        
     }
+
 
     @media (max-width:900px)
     {
@@ -195,6 +231,54 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
+        }
+
+        .controller-container{
+
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            background-color: rgba(255, 255, 255,0.8);
+            border-radius: 12px;
+            padding: 8px;
+            margin-top: 16px;
+            margin-bottom: 16px;
+        }
+
+        .controller-container button{
+            width: 50%;
+        }
+
+        .insert-point-containner{
+
+        border: 1px black solid; 
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        margin-left: 8px;
+        margin-right: 8px;
+        }
+
+        .grid-container{
+            border: 1px black solid; 
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+
+        .buttons-container{
+            display: flex;
+            flex-direction: column;
+        }
+
+        .buttons-container button{
+            margin-right: auto;
+            margin-left: auto;
+            min-width: 64px;
+            margin-top:8px;
+            border-radius: 16px;
         }
 
     }
@@ -243,19 +327,14 @@
     cursor: pointer;
     }
 
+        .forces-containner{
+            background-color: rgb(255,255,255,0.8);
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 16px;
+            margin-bottom: 16px;
+        } 
 
-
-    .controller-container{
-    
-        background-color: rgba(255, 255, 255,0.8);
-        border-radius: 12px;
-        padding: 8px;
-        margin-right: 16px;
-    }
-
-    .controller-container button{
-        width: 80%;
-    }
 
     .forca-container{
         display: flex;
