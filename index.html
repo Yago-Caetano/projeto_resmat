@@ -10,22 +10,21 @@
 <body onload="init()">
     <div class="main-container">
 
+        <div class="about-container">
+            <b>CALCULADOR DE TRELIÇA</b>
+            
+        </div>
 
         <div class="canvas-container">
             <img id="apoioFixoImg-test" src="apoio_fixo.png" style="display: none;"/>
 
             <img id="apoioMovelImg-test" src="apoio_movel.png" style="display: none;"/>
         
-                <canvas id="canvas-1" style="position: absolute; left: 25vw; top: 4vh; background-color: white; border-radius: 24px;">
 
-                </canvas>
-
-                <canvas id="canvas-workspace" style="border:1px solid #000000; background-color: transparent; border-radius: 24px;
+                <canvas id="canvas-workspace" style="border:1px solid #000000; background-color: white; border-radius: 24px;
                 -webkit-box-shadow: 10px 10px 22px 0px rgba(0,0,0,0.25);
                 -moz-box-shadow: 10px 10px 22px 0px rgba(0,0,0,0.25);
-                box-shadow: 10px 10px 22px 0px rgba(0,0,0,0.25);
-                
-                position: absolute; left: 25vw; top: 4vh; z-index: 1; z-index: 1;"
+                box-shadow: 10px 10px 22px 0px rgba(0,0,0,0.25);"
                 >
         
                 </canvas>
@@ -77,24 +76,8 @@
 
             </div>
         </div>
-    
-        <div id="forces-containner" style="position: absolute;left: 4vw; top: 24vh;background-color: rgb(255,255,255,0.8);
-                                             padding: 16px;border-radius: 12px;">
-            <div style="border:1px solid black; border-radius: 8px;padding-left: 8px; padding-right: 8px;">
 
-                <p style="text-align: center; font-size: larger; font-weight: bold;">Forcas Aplicadas</p>
-                <ul id="forces-list" style="list-style-type: none; height: 8vh;overflow-y: auto;">
-                </ul>
-            </div>
-
-            <div style="margin-top:8px; border:1px solid black; border-radius: 8px; padding-left: 8px; padding-right: 8px;" >
-                <p style="text-align: center; font-size: larger; font-weight: bold;">Forças Calculadas</p>
-                <ul id="point-list" style="list-style: none;">
-                </ul>
-
-            </div>
-        </div>
-        
+ 
     
         <!-- The Modal -->
         <div id="myModal" class="modal">
@@ -139,7 +122,26 @@
             </div>
         </div>
 
+    </div>
 
+            
+    <div id="forces-containner" style="background-color: rgb(255,255,255,0.8);
+    padding: 16px;border-radius: 12px;">
+        <div style="border:1px solid black; border-radius: 8px;padding-left: 8px; padding-right: 8px;">
+
+        <p style="text-align: center; font-size: larger; font-weight: bold;">Forcas Aplicadas</p>
+
+        <ul id="forces-list" style="list-style-type: none; height: 8vh;overflow-y: auto; font-size: smaller;
+                list-style-type:none;max-height: 16vh;">
+        </ul>
+        </div>
+
+        <div style="margin-top:8px; border:1px solid black; border-radius: 8px; padding-left: 8px; padding-right: 8px;" >
+        <p style="text-align: center; font-size: larger; font-weight: bold;">Forças Calculadas</p>
+        <ul id="point-list" style="list-style: none;">
+        </ul>
+
+        </div>
     </div>
 </body>
 
@@ -147,7 +149,12 @@
 
     *{
         font-family: 'Chilanka', cursive;
+        margin: 0;
+        padding: 0;
+        outline: 0;
+        box-sizing: border-box;
     }
+
 
     body{
         background: #2e7d32;
@@ -170,7 +177,30 @@
         background: #2e7d32;
     }
 
-    
+    @media (min-width:901px)
+    {
+        .main-container{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+
+    @media (max-width:900px)
+    {
+
+        .main-container{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+    }
+
+
+
     /* The Modal (background) */
     .modal {
     display: none; /* Hidden by default */
@@ -184,6 +214,7 @@
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
     }
+
 
 
     /* Modal Content/Box */
@@ -212,15 +243,10 @@
     cursor: pointer;
     }
 
-    .main-container{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+
 
     .controller-container{
-        position: absolute;
-        left: 78vw; top: 4vh;
+    
         background-color: rgba(255, 255, 255,0.8);
         border-radius: 12px;
         padding: 8px;
@@ -249,8 +275,13 @@
         margin-right: 8px;
     }
 
+    .forces-list li{
+        text-align: center;
+        background-color: saddlebrown;
+    }
 
-  
+ 
+
 
 </style>
 
@@ -315,6 +346,18 @@
         }
     }
 
+
+    class forceDrawn{
+        constructor(pontoInicial,coordXFinal,coordYFinal,modulo,vetor)
+        {
+            this.pontoInicial = pontoInicial;
+            this.coordXFinal = coordXFinal;
+            this.coordYFinal = coordYFinal;
+            this.modulo = modulo;
+            this.vetor = vetor;
+        }
+    }
+
     var count = 0;
     var distancia = 0;
     var angulo = 0;
@@ -324,12 +367,14 @@
     var gridScale = 1;
     var flagApoiosInseridos = false;
     var c,ctx,canvas1,ctx1,apoioFixoImg,apoioMovelImg
+    var gridEnabled = false;
 
     var manualInsertionParams = {
         enabled:false,
         firstPointInserted:false,
         firstPointX: 0,
-        lastPointX:0
+        lastPointX:0,
+        newPoints:true
     }
 
     const points = [];
@@ -337,13 +382,14 @@
     const vetores = [];
     const ImgSize = {x:50,y:50}
     const raio = 8;
+    const forcasDesenhadas = [];
 
     var yOffset = 0;
     var inputMode = "polar";
 
-    const CanvasWidth  = (window.innerHeight)*0.92;
+    var CanvasWidth  = (window.innerWidth)*0.60;
 
-    const CanvasHeigth =   (CanvasWidth);
+    const CanvasHeigth =   (window.innerHeight)*0.92;
 
 
 
@@ -352,16 +398,9 @@
         c = document.getElementById("canvas-workspace");
         ctx = c.getContext("2d");
 
-
-        c1 = document.getElementById("canvas-1");
-        ctx1 = c1.getContext("2d");
-
         
         ctx.canvas.width  = CanvasWidth;
         ctx.canvas.height = CanvasHeigth;
-
-        ctx1.canvas.width  = CanvasWidth;
-        ctx1.canvas.height = CanvasHeigth;
 
         apoioFixoImg = document.getElementById("apoioFixoImg-test");
         apoioMovelImg = document.getElementById("apoioMovelImg-test")
@@ -489,7 +528,6 @@
         buttonCalcular.onclick = function(){
 
 
-
             retorno = true;
             //verifica se os pontos possuem conexões em aberto
             points.forEach(point=>{
@@ -509,6 +547,18 @@
             //verfica se é possivel montar a matriz
             if((lines.length+3) <= (points.length*2))
             {
+                //limpa o canvas
+                clearCanvas(ctx,c);
+
+                //desenha redesenha o grid se o mesmo já foi habilitado antes
+                if(gridEnabled)
+                {
+                    drawGrids();
+                }
+
+                //redesenha a tela
+                reDraw();
+
                 //Faz o calculo da matriz
                 resultadoCalculo = calculo(lines,points,escala);
                 drawReactions(resultadoCalculo);
@@ -595,8 +645,15 @@
             //gridDistance
             if((gridDistance.value) && (gridDistance.value>0))
             {
+                debugger;
                 gridScale = gridDistance.value;
+                if(!gridEnabled)
+                {
+                    gridEnabled = true;
+                }
                 drawGrids();
+                
+                reDraw();
 
             }
             else{
@@ -609,18 +666,90 @@
         window.onscroll = function(e) {
             yOffset = document.body.scrollTop;
         };
+
+        //evento de alterção de tamanho da tela
+        window.onresize = function(e){
+
+            CanvasWidth  = (window.innerHeight)*0.92;
+
+            c = document.getElementById("canvas-workspace");
+            ctx = c.getContext("2d");
+            
+            ctx.canvas.width  = CanvasWidth;
+            ctx.canvas.height = CanvasHeigth;
+ 
+        }
     }
 
+
+    function reDraw()
+    {
+
+            //redesenha as barras
+            lines.map(line =>{
+
+            drawLine(line.startX,line.startY,line.endX,line.endY,null,null,true);
+            })
+
+            suportPointParams = {firstPointX:"",firstPointY:"",lastPointX:"",lastPointY:"",newPoints:false}
+
+            //redesenha os pontos
+            points.map(point =>{
+            if(point.apoioFixo && point.name==="A")
+            {
+                suportPointParams.firstPointX = point.coordX;
+                suportPointParams.firstPointY = point.coordY;
+            }
+            else if(point.apoioMovel && point.name==="B")
+            {
+                suportPointParams.lastPointX = point.coordX;
+                suportPointParams.lastPointY = point.coordY;
+            }
+
+            drawPoint(point)
+            })
+
+            ctx.beginPath();
+
+            //re-desenha as linhas de forças
+            forcasDesenhadas.map(forca =>{
+            canvas_arrow(ctx,forca.pontoInicial.coordX,forca.pontoInicial.coordY,forca.coordXFinal,forca.coordYFinal);
+
+            vetor = new vector(forca.modulo,forca.vetor.angulo)
+
+            insertForceLabel(forca.modulo,forca.pontoInicial,vetor);
+
+            })
+
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            drawSupportPoint(suportPointParams)
+    }
 
     function showForces(resultadoCalculo)
     {
             //insert point in list
         var ul = document.getElementById("point-list");
-    
 
+
+        while(1)
+        {
+            var li = ul.lastElementChild;
+            if(li)
+            {
+                ul.removeChild(li);
+            }
+            else{
+                break;
+            }
+        }
+           
+    
         for(var b = 0; b < resultadoCalculo[0].length;b++)
         {
-            var li = document.createElement("li");
+            li = document.createElement("li");
             li.appendChild(document.createTextNode(`F${resultadoCalculo[0][b]} = ${resultadoCalculo[1][b]} N`));
             ul.appendChild(li);
         }
@@ -647,19 +776,21 @@
                     mctx.moveTo(line.startPoint.coordX,line.startPoint.coordY);
                     mctx.lineTo(line.EndPoint.coordX, line.EndPoint.coordY);
 
-                    if(line.forca > 0) //tracao azul
+                    mctx.lineWidth = 2;
+        
+
+                     if(line.forca > 0) //tracao azul
                     {
                         mctx.strokeStyle = "blue";
 
                     }
-                    else{
+                    else if(line.forca < 0){
                         mctx.strokeStyle = "green";
                     }
-                    
+                    else{
+                        mctx.strokeStyle = "black";
+                    }
                     mctx.stroke();
-                    mctx.strokeStyle = "black";
-
-
 
                 }
             })
@@ -670,7 +801,6 @@
 
     function drawGrids(){
 
-        debugger;
 
         limitX = CanvasWidth;
         stCordY = CanvasHeigth;
@@ -690,41 +820,41 @@
         startY = (stCordY-ImgSize.y)
 
 
-        clearCanvas(ctx1,c1);
+        clearCanvas(ctx,c);
 
         //desenhar linha em "A"
-        ctx1.moveTo(startX , 0);
-        ctx1.lineTo(startX, stCordY);
+        ctx.moveTo(startX , 0);
+        ctx.lineTo(startX, stCordY);
 
 
         //linhas para a direita do ponto A
         for (var x = startX; x <= limitX; x += passo){
-            ctx1.moveTo(x + passo , 0);
-            ctx1.lineTo(x + passo, stCordY);
+            ctx.moveTo(x + passo , 0);
+            ctx.lineTo(x + passo, stCordY);
         }
 
         //linhas para a esquerda do ponto A
         for (var x = startX; x >= 0; x -= passo){
-            ctx1.moveTo(x - passo , 0);
-            ctx1.lineTo(x - passo, stCordY);
+            ctx.moveTo(x - passo , 0);
+            ctx.lineTo(x - passo, stCordY);
         }
 
 
         //linhas abaixo de A
         for (var x = startY; x <= CanvasHeigth; x += passo) {
-            ctx1.moveTo(0, x + passo);
-            ctx1.lineTo((limitX),x + passo);
+            ctx.moveTo(0, x + passo);
+            ctx.lineTo((limitX),x + passo);
         }
 
          //linhas acima de A
          for (var x = startY; x >= 0; x -= passo) {
-            ctx1.moveTo(0, x);
-            ctx1.lineTo((limitX),x);
+            ctx.moveTo(0, x);
+            ctx.lineTo((limitX),x);
         }
 
-        ctx1.strokeStyle = "black";
-        ctx1.lineWidth = 0.2;
-        ctx1.stroke();
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 0.2;
+        ctx.stroke();
     }
 
 
@@ -789,9 +919,18 @@
 
     function drawSubitules()
     {
+
         //desenhar o box azul
         x = (CanvasHeigth/96)
         y = (2*CanvasHeigth/48);
+
+        //limpa a área que deve receber a legenda
+        ctx.beginPath();
+        ctx.rect(x,y,(x + (1.5*(CanvasHeigth/48)) + ctx.measureText("Compressão").width),(32+(CanvasHeigth/48)+y))
+        ctx.fillStyle = "white"
+        ctx.fill();
+
+    
 
         ctx.beginPath();
         ctx.rect(x,y,(CanvasHeigth/48),(CanvasHeigth/48));
@@ -803,10 +942,8 @@
 
 
         //desenhar o box verde
-
         y += 2*(CanvasHeigth/48);
     
-
         ctx.beginPath();
         ctx.fillStyle = "green";
         ctx.rect(x,y,(CanvasHeigth/48),(CanvasHeigth/48));
@@ -848,7 +985,7 @@
         return ponto;
     }
 
-    function drawLine(startX,startY,endX,endY,startPoint,EndPoint){
+    function drawLine(startX,startY,endX,endY,startPoint,EndPoint,mantemListaOriginal){
     
         ctx.beginPath();
         ctx.strokeStyle = "black";
@@ -858,7 +995,10 @@
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        lines.push(new line(startX,startY,endX,endY,startPoint,EndPoint));
+        if(!mantemListaOriginal)
+        {
+            lines.push(new line(startX,startY,endX,endY,startPoint,EndPoint));
+        }
 
 
         /*const a = [[3, 2,-1], [1,3,1], [2,2,-2]]; //3x^2 + 2x -1 = 0;  1x^2 + 3x +1 = 1; 2x^2 + 2x - 2 = 2
@@ -943,7 +1083,6 @@
                             }
                         }
 
-                        debugger;
 
                         pontoFinalX = (ponto.coordX+(Math.cos(vetor.angulo) * CanvasWidth*0.08 ));
                         pontoFinalY = (ponto.coordY+(Math.sin(vetor.angulo*(-1))* CanvasWidth*0.08));
@@ -1000,6 +1139,7 @@
                             pontoFinalY = (ponto.coordY-(Math.sin(vetor.angulo*(-1))* CanvasWidth*0.08));
 
                             canvas_arrow(ctx,pontoFinalX,pontoFinalY,ponto.coordX,ponto.coordY);
+                            forcasDesenhadas.push(new forceDrawn(ponto,pontoFinalX,pontoFinalY,intensidadeInput.value,vetor));
 
                         }
                         else if(offsetY)
@@ -1008,40 +1148,31 @@
                             pontoFinalY = (ponto.coordY-(Math.sin(vetor.angulo*(-1))* CanvasWidth*0.08));
 
                             canvas_arrow(ctx,pontoFinalX,pontoFinalY,ponto.coordX,ponto.coordY);
+                            forcasDesenhadas.push(new forceDrawn(ponto,pontoFinalX,pontoFinalY,intensidadeInput.value,vetor));
                         }
                         else{
 
                             canvas_arrow(ctx,ponto.coordX,ponto.coordY,pontoFinalX,pontoFinalY);
+                            forcasDesenhadas.push(new forceDrawn(ponto,pontoFinalX,pontoFinalY,intensidadeInput.value,vetor));
                         }
 
                         ctx.strokeStyle = "red";
                         ctx.lineWidth = 2;
                         ctx.stroke();
 
-                        debugger;
-                        ctx.fillStyle = "#330033";
-                        ctx.font = "20px Arial";
-
-                        tamanhoTxt = {
-                            width:ctx.measureText(intensidadeInput.value).width,
-                        }
-
-                        //coordenadas para inserir texto de apoio
-                        valX = (ponto.coordX + (((pontoFinalX - ponto.coordX) - (tamanhoTxt.width))/2));
-                        valY = ponto.coordY + (((pontoFinalY - ponto.coordY)/2) + 5);
-                   
-                        ctx.fillText(intensidadeInput.value,valX ,valY);
-
+                        insertForceLabel(intensidadeInput.value,ponto,vetor);
+                        //retorna para 0º
+                        //ctx.rotate((vetor.angulo*-1));
                         
                         //insere força no list
                         var ul = document.getElementById("forces-list");
                         var li = document.createElement("li");
-                        li.appendChild(document.createTextNode(`Ponto: ${ponto.name} - Intensidade ${intensidadeInput.value} - ${anguloInput.value}°`));
+                        li.style="text-align:center; margin:0px auto 0px auto;";
+                        li.appendChild(document.createTextNode(`Ponto: ${ponto.name} - Mod: ${intensidadeInput.value} - ${anguloInput.value}°`));
                         ul.appendChild(li);
 
                     }
                     else{
-
                     } 
                 }
                 else{
@@ -1054,6 +1185,70 @@
             }
 
         }
+
+    }
+
+
+    function insertForceLabel(intensidade,pontoInicial,vetor)
+    {
+        ctx.fillStyle = "#330033";
+        ctx.font = "20px Arial";
+
+        tamanhoTxt = {
+            width:ctx.measureText(intensidade).width,
+        }
+
+        //coordenadas para inserir texto de apoio
+        pontoFinalX = (pontoInicial.coordX+(Math.cos(vetor.angulo) * CanvasWidth*0.08));
+        pontoFinalY = (pontoInicial.coordY+(Math.sin(vetor.angulo*(-1))* CanvasWidth*0.08));
+
+        //centro da linha do vetor
+        valX = ((pontoFinalX + pontoInicial.coordX)/2);
+        valY = ((pontoFinalY+pontoInicial.coordY)/2);   
+                        
+        //coordenadas para inserir o texto
+        var coordTextX = 0
+        var coordTextY = 0;
+
+        //ctx.fillText(intensidadeInput.value,valX ,valY);
+        //ctx.rotate(vetor.angulo);
+                        
+
+        var anguloTexto = vetor.angulo;
+
+        if(anguloTexto > (Math.PI/2) && anguloTexto <= Math.PI)
+        {
+                            
+            /* valX = (ponto.coordX + (((pontoFinalX-ponto.coordX) - (tamanhoTxt.width))/2))+10;
+            valY = ponto.coordY + (((pontoFinalY - ponto.coordY)/2) - 15);    */
+            anguloTexto = ((Math.PI - anguloTexto )*-1);
+
+            coordTextX = ((Math.cos(anguloTexto) * (tamanhoTxt.width/2))*-1);
+            coordTextY = ((Math.sin(anguloTexto)*(tamanhoTxt.width/2))*-1);
+
+        }
+        else if(anguloTexto > (Math.PI) && anguloTexto <= Math.PI*1.5)
+        {
+            anguloTexo =  anguloTexto - Math.PI
+        }
+        else if(anguloTexto>(Math.PI*1.5) && (anguloTexto <= Math.PI*2)){
+            anguloTexo =  anguloTexto - Math.PI*1.5
+        }
+        else{
+                            
+            valX = (pontoInicial.coordX + (((pontoFinalX - pontoInicial.coordX) - (tamanhoTxt.width))/2));
+            valY = pontoInicial.coordY + (((pontoFinalY - pontoInicial.coordY)/2) - 2);      
+        }
+
+        ctx.arc(valX, valY, 2, 0, 2 * Math.PI, true);
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(valX+coordTextX,valY+coordTextY);
+
+        ctx.rotate(anguloTexto);
+        ctx.fillText(intensidade,0 ,0);
+        ctx.restore();
 
     }
 
@@ -1124,7 +1319,6 @@
 
         buttonConfirmarDistancia.onclick = function(){
         
-            debugger;
             var valor = distanceInput.value;
             if((valor) && (valor>0))
             {
@@ -1277,7 +1471,8 @@
 
     function drawSupportPoint(params)
     {
-        debugger;
+
+        
 
         if(!params)
         {
@@ -1293,7 +1488,7 @@
 
 
             ctx.drawImage(apoioFixoImg,startImgX,startImgY,ImgSize.x,ImgSize.y);
-        
+
             insertPoint((janelaX*0.375),startImgY,true);
 
 
@@ -1309,19 +1504,24 @@
 
 
             ctx.drawImage(apoioFixoImg,(params.firstPointX-(ImgSize.x/2)),startImgY,ImgSize.x,ImgSize.y);
+
+            if(params.newPoints)
+            {
+                insertPoint(params.firstPointX,startImgY,true);
+            }
         
-            insertPoint(params.firstPointX,startImgY,true);
-
-
             //ponto final
             ctx.moveTo(params.lastPointX,(janelaY-ImgSize.y));
             ctx.drawImage(apoioMovelImg,(params.lastPointX-(ImgSize.x/2)),startImgY,ImgSize.x,ImgSize.y);
         
-            insertPoint(params.lastPointX,startImgY,false,true);
+            if(params.newPoints)
+            {
+                insertPoint(params.lastPointX,startImgY,false,true);
 
-            calculaEscala(manualInsertionParams.distanceInputed);
+                calculaEscala(manualInsertionParams.distanceInputed);
 
-            clearCanvas(ctx1,c1);
+            } 
+
         }
      
     }
