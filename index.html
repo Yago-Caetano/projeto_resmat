@@ -9,7 +9,20 @@
 <script src="gauss-jordan.js"></script>
 
 <body onload="init()">
-    <div class="main-container">
+
+    <div id="login-container" class="login-container">
+        <div>
+            <div class="login-interface">
+                <b>Calculador de treliças</b>
+                <p>Por favor, informe suas credenciais</p>
+                <input id="user-input" type="text" placeholder="login"/>
+                <input id="psw-input" type="password" placeholder="senha"/>
+                <button id="btn-login">Entrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container hidden" id="main-container">
 
         <div class="about-container">
             <b>CALCULADOR DE TRELIÇA</b>
@@ -33,7 +46,7 @@
 
             <div class="insert-point-containner">
 
-                <p style="text-align: center; font-size: larger; font-weight: bold;">Inserir Pontos</p>
+                <p>Inserir Pontos</p>
                 <label for="select-input-mode">Modo de localização</label>
                 <select id="select-input-mode">
                     <option value="polar">Polar</option>
@@ -45,18 +58,16 @@
                 <label for="pontos-de-referencia">Ponto de origem</label>
                 <select id="pontos-de-referencia"></select>
             
-                <button id="btn-insert-point" style="margin-right: auto;
-                                             margin-left: auto; border-radius: 16px;">Inserir ponto</button>
+                <button id="btn-insert-point">Inserir ponto</button>
 
             </div>
 
             <div class="grid-container">
-                <p style="text-align: center; font-weight: bold; font-size: larger;">Grade</p>
+                <p>Grade</p>
                 
                 <input id="grid-distance" type="number" placeholder="Largura dos quadros" ></input> 
 
-                <button id="btn-draw-grids" style="margin-right: auto;
-                             margin-left: auto; border-radius: 16px;margin-top: 8px;">Redesenhar Grid</button>
+                <button id="btn-draw-grids">Redesenhar Grid</button>
             </div>
 
             <div class="buttons-container">
@@ -109,7 +120,7 @@
                         </canvas>
                     </div>
                 </div>
-            
+                <button id="btApagarPonto">Apagar</button>
                 <button id="btConfirmarDistancia">Confirmar</button>
             </div>
         </div>
@@ -117,8 +128,8 @@
     </div>
 
             
-    <div class="forces-containner">
-        <div style="border:1px solid black; border-radius: 8px;padding-left: 8px; padding-right: 8px;">
+    <div class="forces-containner hidden" id="forces-list-conatinner">
+        <div class="forcas-aplicadas hidden" id="forces-aplicadas">
 
         <p style="text-align: center; font-size: larger; font-weight: bold;">Forcas Aplicadas</p>
 
@@ -127,7 +138,7 @@
         </ul>
         </div>
 
-        <div style="margin-top:8px; border:1px solid black; border-radius: 8px; padding-left: 8px; padding-right: 8px;" >
+        <div class="forcas-calc hidden" id="forcas-calculadas" style="margin-top:8px; border:1px solid black; border-radius: 8px; padding-left: 8px; padding-right: 8px;" >
         <p style="text-align: center; font-size: larger; font-weight: bold;">Forças Calculadas</p>
         <ul id="point-list" style="list-style: none;">
         </ul>
@@ -168,13 +179,14 @@
         background: #2e7d32;
     }
 
-
     #canvas-workspace{
         border:1px solid #000000; background-color: white; border-radius: 24px;
         -webkit-box-shadow: 10px 10px 22px 0px rgba(0,0,0,0.25);
         -moz-box-shadow: 10px 10px 22px 0px rgba(0,0,0,0.25);
         box-shadow: 10px 10px 22px 0px rgba(0,0,0,0.25);
     }
+
+
 
     @media (min-width:901px)
     {
@@ -196,8 +208,13 @@
             width: 80%;
         }
 
-        .insert-point-containner{
+        .controller-container p{
+            text-align: center;
+            font-weight: bold;
+            font-size: larger;
+        }
 
+        .insert-point-containner{
             border: 1px black solid; 
             border-radius: 8px;
             display: flex;
@@ -228,6 +245,14 @@
             margin-left: auto;
             margin-right: auto;
         }
+
+        .forcas-aplicadas{
+            border:1px solid black;
+            border-radius: 8px;
+            padding-left: 8px;
+            padding-right: 8px;
+
+        } 
         
     }
 
@@ -237,13 +262,12 @@
         .forces-containner{
             margin-left: 8px;
             margin-right: 8px;
-            width: 100%;
         }
 
         .controller-container{
-
             display: flex;
             justify-content: space-around;
+            flex-direction: column;
             align-items: flex-start;
             background-color: rgba(255, 255, 255,0.8);
             border-radius: 12px;
@@ -256,10 +280,16 @@
 
         .controller-container button{
             border-radius: 8px;
+            font-size: small;
         }
 
-        #canvas-workspace{
-            margin: auto;
+        .controller-container p{
+            font-weight: bold;
+        }
+        
+        .controller-container p,label{
+            text-align: center;
+            font-size: small;
         }
 
         .main-container{
@@ -268,6 +298,45 @@
             align-items: center;
             justify-content: center;
         }
+
+        .grid-container{
+            border: 1px black solid; 
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            margin-top: 8px;
+        }
+
+        .insert-point-containner{
+            border: 1px black solid; 
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .buttons-container{
+            margin-top: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-self: center;
+            
+        }
+
+        .forces-containner{
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 80vw;
+        }
+
+        .forcas-aplicadas{
+            border:1px solid black;
+            border-radius: 8px;
+            padding-left: 8px;
+            padding-right: 8px;
+            
+        } 
         
     }
 
@@ -282,7 +351,6 @@
         }
 
         .controller-container{
-
             display: flex;
             justify-content: space-around;
             align-items: flex-start;
@@ -297,6 +365,13 @@
 
         .controller-container button{
             width: 50%;
+        }
+
+            
+        .controller-container p{
+            text-align: center;
+            font-weight: bold;
+            font-size: larger;
         }
 
         .insert-point-containner{
@@ -416,7 +491,42 @@
         background-color: saddlebrown;
     }
 
- 
+    .login-container{
+        max-width: 40%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    .login-interface{
+        display: flex;
+        flex-direction: column;
+        background-color: rgb(255,255,255,0.8);
+        justify-self: center;
+        border-radius: 16px;
+        align-items: space-between;
+    }
+
+    .login-interface b{
+        font-size: x-large;
+        padding:24px;
+    }
+
+    .login-interface input,button{
+        font-size: larger;
+        border-radius: 8px;
+        padding: 8px;
+        margin-top: 16px;
+        border:none
+    }
+
+    .hidden{
+        display: none;
+    }
 
 
 </style>
@@ -427,6 +537,8 @@
     class point{
         ligacoes = []
         forcasExternas = []
+        yOffset = 0
+
         constructor(coordX,coordY,name,apoioFixo,apoioMovel)
         {
             this.coordX = coordX;
@@ -441,6 +553,11 @@
             this.ligacoes.push(ponto);
         }
 
+        setYoffset(ofsset)
+        {
+            this.yOffset = ofsset;
+        }
+
         inserirForca(vetor)
         {
             this.forcasExternas.push(vetor);
@@ -451,12 +568,8 @@
 
     class line{
 
-        constructor(startX,startY,endX,endY,startPoint,EndPoint)
+        constructor(startPoint,EndPoint)
         {
-            this.startX = startX;
-            this.startY = startY;
-            this.endX = endX;
-            this.endY = endY;
             this.tipoPerfil = 'quadrado';
             this.forca = 0;
             this.deformacaoLong = 0;
@@ -513,8 +626,8 @@
         newPoints:true
     }
 
-    const points = [];
-    const lines = [];
+    var points = [];
+    var lines = [];
     const vetores = [];
     const ImgSize = {x:50,y:50}
     const raio = 8;
@@ -523,10 +636,26 @@
     var yOffset = 0;
     var inputMode = "polar";
 
-    var CanvasWidth  = (window.innerWidth)*0.60;
+    var distancia_apoios
 
-    const CanvasHeigth =   (window.innerHeight)*0.92;
+    var CanvasWidth,CanvasHeigth;
 
+  
+
+
+    function ajustCanvasSize()
+    {
+        if(window.innerWidth < 900)
+        {
+            CanvasWidth  = (window.innerWidth)*0.8;
+            CanvasHeigth =   (window.innerHeight)*0.92;
+        }
+        else
+        {
+            CanvasWidth  = (window.innerWidth)*0.6;
+            CanvasHeigth =   (window.innerHeight)*0.92;
+        }
+    }
 
 
     function init()
@@ -534,7 +663,8 @@
         c = document.getElementById("canvas-workspace");
         ctx = c.getContext("2d");
 
-        
+        ajustCanvasSize();
+
         ctx.canvas.width  = CanvasWidth;
         ctx.canvas.height = CanvasHeigth;
 
@@ -549,7 +679,21 @@
         var gridDistance = document.getElementById("grid-distance");
 
     
+        var btnlogin = document.getElementById('btn-login');
+        btnlogin.onclick = () =>{
+            var user = document.getElementById("user-input").value; 
+            var psw =  document.getElementById("psw-input").value;
 
+            if((user === "EC4") && (psw === "EC4"))
+            {
+                document.getElementById("login-container").classList.add("hidden");
+                document.getElementById("main-container").classList.remove("hidden");
+            }
+            else{
+                alert('Credenciais incorretas');
+            }
+
+        }
 
         //input mode
         var selectInputMode = document.getElementById("select-input-mode");
@@ -781,7 +925,6 @@
             //gridDistance
             if((gridDistance.value) && (gridDistance.value>0))
             {
-                debugger;
                 gridScale = gridDistance.value;
                 if(!gridEnabled)
                 {
@@ -816,17 +959,130 @@
             ctx.canvas.height = CanvasHeigth;
  
         }*/
+
+        window.addEventListener("orientationchange", function(event) {
+
+            var offSetY = 0;
+            var lastCanvasWidth = CanvasWidth;
+
+            CanvasWidth = CanvasHeigth;
+            CanvasHeigth = lastCanvasWidth;
+
+            ctx.canvas.width = CanvasWidth;
+            ctx.canvas.height = CanvasHeigth;
+
+
+            if(points[0])
+            {
+
+                //inverte os pontos
+                for(var a = 0; a< points.length; a++)
+                {
+                    
+                    lastX = points[a].coordX;
+                    lastY = points[a].coordY;
+
+                    if(a === 0)
+                    {
+                        offSetY = (((CanvasHeigth - ImgSize.y) - ((points[a].coordY*CanvasHeigth)/CanvasWidth)))
+                    }
+                    if(lastCanvasWidth < CanvasWidth)
+                    {
+                        //se contiver offsetY
+                        if(points[a].yOffset)
+                        {
+                            //remove offset
+                            points[a].setYoffset(0);
+                            points[a].coordY -= points[a].yOffset
+                        }
+                     
+
+                        points[a].coordX = ((points[a].coordX*CanvasWidth)/CanvasHeigth);
+                        points[a].coordY = ((points[a].coordY*CanvasHeigth)/CanvasWidth);
+
+                        if(!points[a].yOffset)
+                        {
+                            points[a].setYoffset(offSetY);
+                        }
+
+                        points[a].coordY += points[a].yOffset;
+
+
+
+                    }
+                    else{
+
+                        //se contiver offsetY
+                        if(points[a].yOffset)
+                        {
+                            //remove offset
+                            points[a].setYoffset(0);
+                            points[a].coordY -= points[a].yOffset
+                        }
+
+                        points[a].coordX = ((points[a].coordX*CanvasWidth)/CanvasHeigth);
+                        points[a].coordY = ((points[a].coordY*CanvasHeigth)/CanvasWidth);
+
+                        if(!points[a].yOffset)
+                        {
+                            points[a].setYoffset(offSetY);
+                        }
+
+                        points[a].coordY += points[a].yOffset;
+
+                    }
+               
+                }
+
+                calculaEscala();
+
+                clearCanvas(ctx,c);
+                reDraw();
+            }
+
+
+        });
+    }
+
+    function containsPoint(point)
+    {
+        var status = false
+        points.forEach(ponto =>{
+            if(ponto.name === point.name)
+            {
+                status = true;
+                return;
+            }
+        })
+
+        return status;
     }
 
 
     function reDraw()
     {
 
-            //redesenha as barras
-            lines.map(line =>{
+    
 
-            drawLine(line.startX,line.startY,line.endX,line.endY,null,null,true);
-            })
+            //redesenha as barras
+            for(var i = 0; i < lines.length; i++)
+            {
+                if(lines[i])
+                {
+                    if(containsPoint(lines[i].startPoint) && containsPoint(lines[i].EndPoint))
+                    {
+                        drawLine(lines[i].startPoint,lines[i].EndPoint,true);
+                    }
+                    else
+                    {
+                        lines.splice(i,1);
+                        i--;
+
+                    }
+                }
+              
+            }  
+
 
             suportPointParams = {firstPointX:"",firstPointY:"",lastPointX:"",lastPointY:"",newPoints:false}
 
@@ -867,9 +1123,13 @@
 
     function showForces(resultadoCalculo)
     {
+    
+        var forcaCalculadaList = document.getElementById("forcas-calculadas");
+
             //insert point in list
         var ul = document.getElementById("point-list");
 
+        forcaCalculadaList.classList.remove('hidden');
 
         while(1)
         {
@@ -1043,13 +1303,17 @@
     function drawPoint(ponto)
     {
         ctx.beginPath();
+        ctx.strokeStyle = "black";
+        //ctx.arc(ponto.coordX, (ponto.coordY + ponto.yOffset), raio, 0, 2 * Math.PI, true);
         ctx.arc(ponto.coordX, ponto.coordY, raio, 0, 2 * Math.PI, true);
+
         ctx.stroke();
         ctx.fillStyle = "black";
         ctx.fill();
 
         ctx.font = "24px Arial";
         ctx.fillStyle = "red";
+        //ctx.fillText(ponto.name, (ponto.coordX+raio), ((ponto.coordY + ponto.yOffset)+raio));
         ctx.fillText(ponto.name, (ponto.coordX+raio), (ponto.coordY+raio));
 
     }
@@ -1092,9 +1356,15 @@
 
     }
 
-    function calculaEscala(distancia_apoios)
+    function calculaEscala(invertido)
     {
-        escala = ((points[1].coordX - points[0].coordX)/distancia_apoios);
+        if(!invertido)
+        {
+            escala = ((points[1].coordX - points[0].coordX)/distancia_apoios);
+        }
+        else{
+            escala = ((points[1].coordY - points[0].coordY)/distancia_apoios);
+        }
         console.log(`A escala atual é: ${escala}`);
     }
 
@@ -1122,19 +1392,19 @@
         return ponto;
     }
 
-    function drawLine(startX,startY,endX,endY,startPoint,EndPoint,mantemListaOriginal){
+    function drawLine(startPoint,EndPoint,mantemListaOriginal){
     
         ctx.beginPath();
         ctx.strokeStyle = "black";
-        ctx.moveTo(startX, startY);
-        ctx.lineTo(endX,endY);  // 2x^2 + 4x + 2 = 75
+        ctx.moveTo(startPoint.coordX, startPoint.coordY);
+        ctx.lineTo(EndPoint.coordX,EndPoint.coordY);  // 2x^2 + 4x + 2 = 75
 
         ctx.lineWidth = 1;
         ctx.stroke();
 
         if(!mantemListaOriginal)
         {
-            lines.push(new line(startX,startY,endX,endY,startPoint,EndPoint));
+            lines.push(new line(startPoint,EndPoint));
         }
 
 
@@ -1302,10 +1572,17 @@
                         //ctx.rotate((vetor.angulo*-1));
                         
                         //insere força no list
+                        var forceContainer = document.getElementById("forces-list-conatinner");
+                        forceContainer.classList.remove('hidden');
+
+                        var forceAplicadaContainer = document.getElementById("forces-aplicadas");
+                        forceAplicadaContainer.classList.remove('hidden');
+
                         var ul = document.getElementById("forces-list");
                         var li = document.createElement("li");
+
                         li.style="text-align:center; margin:0px auto 0px auto;";
-                        li.appendChild(document.createTextNode(`Ponto: ${ponto.name} - Mod: ${intensidadeInput.value} - ${anguloInput.value}°`));
+                        li.appendChild(document.createTextNode(`Ponto: ${ponto.name} - Mod: ${intensidadeInput.value} N - ${anguloInput.value}°`));
                         ul.appendChild(li);
 
                     }
@@ -1466,7 +1743,8 @@
                     drawSupportPoint();
                     buttonSuport.disabled = true;
                     flagApoiosInseridos = true;
-                    calculaEscala(valor);
+                    distancia_apoios = valor;
+                    calculaEscala();
                 }
                 else{
 
@@ -1515,10 +1793,14 @@
         var modal = document.getElementById("myModal");
 
         var buttonConfirmarDistancia = document.getElementById("btConfirmarDistancia");
+        var buttonApagarPonto = document.getElementById("btApagarPonto");
+
         document.getElementById("text-modal").innerHTML = "Selecione as conexões do ponto";
         document.getElementById("forca-container").style.display = "none";
 
         buttonConfirmarDistancia.style.display = "block";
+        buttonApagarPonto.style.display ="block";
+
         modal.style.display = "block";
 
         // When the user clicks anywhere outside of the modal, close it
@@ -1575,6 +1857,28 @@
            
 
         }
+
+        buttonApagarPonto.onclick = function(){
+
+        
+            for(a = 0; a< points.length; a++)
+            {
+                if(ponto.name === points[a].name)
+                {
+                   points.splice(a,1);
+                   break;
+                }
+
+            }
+
+            modal.style.display = "none";
+
+            clearCanvas(ctx,c);
+            reDraw();
+
+
+
+        }
     }
 
     function realizaLigação(nomePontoOrigem,pontoNovo)
@@ -1603,7 +1907,7 @@
                 }
             }
 
-            drawLine(pontoNovo.coordX,pontoNovo.coordY,pontoSelecionado.coordX,pontoSelecionado.coordY,pontoNovo,pontoSelecionado);
+            drawLine(pontoNovo,pontoSelecionado);
     }
 
     function drawSupportPoint(params)
@@ -1654,8 +1958,8 @@
             if(params.newPoints)
             {
                 insertPoint(params.lastPointX,startImgY,false,true);
-
-                calculaEscala(manualInsertionParams.distanceInputed);
+                distancia_apoios = manualInsertionParams.distanceInputed;
+                calculaEscala();
 
             } 
 
@@ -1680,7 +1984,7 @@
         document.getElementById("btConfirmarDistancia").onclick = null;
         document.getElementById("auto-insertion-container").style.display = "none";
         document.getElementById("auto-insertion-container").onclick = null;
-
+        document.getElementById("btApagarPonto").style.display="none";
         const myNode = document.getElementById("select-available-points");
 
         while (myNode.firstChild) {
