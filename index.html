@@ -26,7 +26,7 @@
 
         <div class="about-container">
             <b>CALCULADOR DE TRELIÇA</b>
-            
+            <p id="info-btn">&#128712 Info</p>
         </div>
 
         <div class="canvas-container">
@@ -103,7 +103,7 @@
                     <input type="checkbox" id="cb-distancia-auto" checked="true"></input>
                 </div>
  
-                <div id="forca-container" style="display: flex; flex-direction: row;justify-content: space-around;">
+                <div id="forca-container">
                     <div>
                         <ul style="list-style-type: none;padding: 16px;">
                             <li><label for="select-point">Ponto desejado</label></li>
@@ -131,7 +131,7 @@
     <div class="forces-containner hidden" id="forces-list-conatinner">
         <div class="forcas-aplicadas hidden" id="forces-aplicadas">
 
-        <p style="text-align: center; font-size: larger; font-weight: bold;">Forcas Aplicadas</p>
+        <p style="padding: 8px; text-align: center; font-size: larger; font-weight: bold;">Forcas Aplicadas</p>
 
         <ul id="forces-list" style="list-style-type: none; height: 8vh;overflow-y: auto; font-size: smaller;
                 list-style-type:none;max-height: 16vh;">
@@ -139,7 +139,7 @@
         </div>
 
         <div class="forcas-calc hidden" id="forcas-calculadas" style="margin-top:8px; border:1px solid black; border-radius: 8px; padding-left: 8px; padding-right: 8px;" >
-        <p style="text-align: center; font-size: larger; font-weight: bold;">Forças Calculadas</p>
+        <p style="padding: 8px;text-align: center; font-size: larger; font-weight: bold;">Forças Calculadas</p>
         <ul id="point-list" style="list-style: none;">
         </ul>
 
@@ -214,6 +214,8 @@
             font-size: larger;
         }
 
+
+
         .insert-point-containner{
             border: 1px black solid; 
             border-radius: 8px;
@@ -246,13 +248,53 @@
             margin-right: auto;
         }
 
-        .forcas-aplicadas{
-            border:1px solid black;
-            border-radius: 8px;
-            padding-left: 8px;
-            padding-right: 8px;
+        #forca-container{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+        }
 
-        } 
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+            background-color: #fefefe;
+            margin-top: 8%;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%; /* Could be more or less, depending on screen size */
+        }
+
+        .login-container{
+            max-width: 40%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        .about-container{
+            display: flex;
+            flex-direction: column;
+        }
+
         
     }
 
@@ -337,6 +379,59 @@
             padding-right: 8px;
             
         } 
+
+        #forca-container{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+
+        #forca-container input{
+            max-width: 100%;
+        }
+
+          /* The Modal (background) */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+
+
+    /* Modal Content/Box */
+    .modal-content {
+        background-color: #fefefe;
+        margin-top: 8%;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+    }
+
+    .login-container{
+        max-width: 60%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        }
+
+    .about-container{
+        display: flex;
+        flex-direction: row;
+    }
         
     }
 
@@ -365,8 +460,8 @@
 
         .controller-container button{
             width: 50%;
+            font-size: small;
         }
-
             
         .controller-container p{
             text-align: center;
@@ -379,8 +474,13 @@
             border-radius: 8px;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             margin-left: 8px;
             margin-right: 8px;
+        }
+
+        .insert-point-containner button{
+            align-self: center;
         }
 
         .forces-containner{
@@ -398,6 +498,10 @@
             margin-right: 8px;
         }
 
+        .grid-container button{
+            align-self: center;
+        }
+
         .buttons-container{
             display: flex;
             flex-direction: column;
@@ -411,35 +515,56 @@
             border-radius: 16px;
         }
 
-    }
-
-
+        #forca-container{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
 
     /* The Modal (background) */
     .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
     }
 
 
 
     /* Modal Content/Box */
     .modal-content {
-    background-color: #fefefe;
-    margin-top: 8%;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 50%; /* Could be more or less, depending on screen size */
+        background-color: #fefefe;
+        margin-top: 8%;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+    }
+
+    .login-container{
+        max-width: 60%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    
+    .about-container{
+        display: flex;
+        flex-direction: row;
+    }
+
     }
 
     /* The Close Button */
@@ -457,22 +582,16 @@
     cursor: pointer;
     }
 
-        .forces-containner{
-            background-color: rgb(255,255,255,0.8);
-            padding: 16px;
-            border-radius: 12px;
-            margin-top: 16px;
-            margin-bottom: 16px;
-            margin-left: auto;
-            margin-right: auto;
-        } 
-
-
-    .forca-container{
-        display: flex;
-        flex-direction: row;
-    }
-
+    .forces-containner{
+        background-color: rgb(255,255,255,0.8);
+        padding: 16px;
+        border-radius: 12px;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 80%;
+    } 
  
     .force-details-container{
         display: flex;
@@ -480,10 +599,13 @@
         align-items: center;
     }
 
-    .insert-point-containner p,input,label,select,button{
-        margin-bottom: 8px;
-        margin-left: 8px;
-        margin-right: 8px;
+
+    .insert-point-containner p,input,label,select,button,b{
+        margin: 8px;
+    }
+
+    .grid-container p,input,label,select,button,b{
+        margin: 8px;
     }
 
     .forces-list li{
@@ -491,15 +613,23 @@
         background-color: saddlebrown;
     }
 
-    .login-container{
-        max-width: 40%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
+    .forcas-aplicadas{
+        border:1px solid black;
+        border-radius: 8px;
+        padding-left: 8px;
+        padding-right: 8px;
+    } 
+
+    #forcas-calc{
+        margin-top:8px;
+        border:1px solid black;
+        border-radius: 8px;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    #forcas-calc b{
+        padding: 8px;
     }
 
     .login-interface{
@@ -526,6 +656,10 @@
 
     .hidden{
         display: none;
+    }
+
+    #info-btn{
+        color: #011F4B;
     }
 
 
@@ -677,6 +811,12 @@
         var buttonInserirForca = document.getElementById("btn-forca");
         var buttonRedraw = document.getElementById("btn-draw-grids");
         var gridDistance = document.getElementById("grid-distance");
+        var infoButton = document.getElementById("info-btn");
+    
+
+        infoButton.onclick = () =>{
+            alert("INFO");
+        }
 
     
         var btnlogin = document.getElementById('btn-login');
