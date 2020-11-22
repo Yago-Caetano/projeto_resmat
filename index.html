@@ -145,6 +145,64 @@
 
         </div>
     </div>
+
+    <div class="info-modal" id="info-modal">
+        <div class="info-modal-content">
+            <h1>Calculador de Treliça</h1>
+            <p>Software desenvolvido para o calculo de treliças isoestáticas</p>
+            <section>
+                <h2>Instruções</h2>
+
+                <h3>Inserir apoios</h3>
+                <p>Para utilizar o software, é necessário inserir os pontos de apoio clicando no botão <b>Inserir apoio</b>.
+                    Por padrão os apoios são inseridos na tela com distância (em pixels) fixa. É possivel inserir os pontos livremente (no eixo y)
+                    desmarcando a opção <b>Inserção Automática</b> </p>
+
+                <h3>Escala de desenho</h3>
+                <p>O software trabalha com sistema de escala para desenhar os pontos e conexões. A escala é definida com base na distancia dos pontos de apoio. Afim de resolver possíveis problemas exibição,
+                     é possível modificar a distancia entre os pontos de apoio (Verifique Inserção de apoios)</p>
+
+
+                <h3>Inserir pontos</h3>
+                <p>Existem três formas de inserir pontos na tela, sendo:</p>
+
+                <ul>
+                    <li>Clicar na tela</li>
+                    <li>Coordenadas polares (apartir da origem selecionada)</li>
+                    <li>Coordenadas cartesianas (apartir de origem selecionada)</li>
+                </ul>
+
+                <p>Para inserir pontos por meio de coordenadas, utilize o painel <b>Inserir Pontos</b></p>
+
+                <h3>Conexões entre pontos</h3>
+
+                <p>Para realizar conexões entre os pontos basta clicar sobre um dos pontos que deseja-se efetuar a conexão.
+                     Uma janela será apresentada solictando a escolha do ponto de detino da conexão</p>
+
+
+                <h3>Inserir Força</h3>
+                <p>Abra a tela de inserção de forças clicando no botão <b>Inserir Força</b>. Com a tela aberta, selecione o ponto desejado e insira os valores de força e angulo.
+                    Para ajudar na escolha do valor de angulo correto, é possivel verificar na tela de <b>Preview</b> como o vetor será desenhado.</p>
+                
+                <h3>Calcular Treliça</h3>
+                    <p>Basta clicar no botão <b>Calcular</b></p>
+                    
+                </section>
+
+
+
+            <section>
+                <h2>Integrantes do Grupo:</h2>
+                <ul>
+                    <li>Guilherme Tavares</li>
+                    <li>Lucas Costa</li>
+                    <li>Rodrigo Emiliano</li>
+                    <li>Roger Kenichi</li>
+                    <li>Yago Caetano</li>
+                </ul>
+            </section>
+        </div>
+    </div>
 </body>
 
 <style>
@@ -223,12 +281,21 @@
             flex-direction: column;
         }
 
+        .insert-point-containner button{
+            align-self: center;
+        }
+
         .grid-container{
             border: 1px black solid; 
             border-radius: 8px;
             display: flex;
             flex-direction: column;
             margin-top: 8px;
+        }
+
+        
+        .grid-container button{
+            align-self: center;
         }
 
         .buttons-container{
@@ -662,6 +729,46 @@
         color: #011F4B;
     }
 
+    #info-modal{
+        display: none;
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+        /* Modal Content/Box */
+        .info-modal-content {
+        background-color: #fefefe;
+        margin-top: 8%;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+    }
+
+    .info-modal-content section p,h3{
+        padding: 8px;
+    }
+
+
+    .info-modal-content section ul{
+        padding-left: 16px;
+        list-style-type:none;
+    }
+
+    .info-modal-content section{
+        padding-top: 16px;
+        padding-bottom: 16px;
+    }
+
+
 
 </style>
 
@@ -815,7 +922,17 @@
     
 
         infoButton.onclick = () =>{
-            alert("INFO");
+            infoModal = document.getElementById('info-modal');
+
+            infoModal.style = "display: block;";
+
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function(event) {
+            if (event.target === infoModal) {
+                infoModal.style.display = "none";
+            }
+        }
+
         }
 
     
@@ -946,7 +1063,6 @@
         };
 
         buttonCalcular.onclick = function(){
-
 
             retorno = true;
             //verifica se os pontos possuem conexões em aberto
@@ -1248,9 +1364,9 @@
             forcasDesenhadas.map(forca =>{
             canvas_arrow(ctx,forca.pontoInicial.coordX,forca.pontoInicial.coordY,forca.coordXFinal,forca.coordYFinal);
 
-            vetor = new vector(forca.modulo,forca.vetor.angulo)
+            //vetor = new vector(forca.modulo,forca.vetor.angulo)
 
-            insertForceLabel(forca.modulo,forca.pontoInicial,vetor);
+            insertForceLabel(forca.modulo,forca.pontoInicial,forca.vetor);
 
             })
 
@@ -1745,6 +1861,7 @@
 
     function insertForceLabel(intensidade,pontoInicial,vetor)
     {
+        debugger;
         ctx.fillStyle = "#330033";
         ctx.font = "20px Arial";
 
@@ -1794,8 +1911,8 @@
             valY = pontoInicial.coordY + (((pontoFinalY - pontoInicial.coordY)/2) - 2);      
         }
 
-        ctx.arc(valX, valY, 2, 0, 2 * Math.PI, true);
-        ctx.stroke();
+        //ctx.arc(valX, valY, 2, 0, 2 * Math.PI, true);
+        //ctx.stroke();
 
         ctx.save();
         ctx.translate(valX+coordTextX,valY+coordTextY);
