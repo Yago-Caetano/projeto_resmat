@@ -385,6 +385,8 @@
                      buttonRedraw.disabled = false;
                      gridDistance.disabled = false;
 
+                    clearCanvas(ctx,c);
+
                     drawSupportPoint(manualInsertionParams);
                 }
             }
@@ -1258,10 +1260,10 @@
 
     function drawAuxRect(){
 
-        ctx1.beginPath();
+        ctx.beginPath();
 
-        ctx1.rect(0,0,CanvasWidth,(CanvasHeigth-ImgSize.y));
-        ctx1.fill();
+        ctx.rect(0,0,CanvasWidth,(CanvasHeigth-ImgSize.y));
+        ctx.fill();
     }
 
 
