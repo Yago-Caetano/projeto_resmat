@@ -14,3 +14,12 @@ Para executar a aplicação, abra o arquivo **index.html**
 A figura abaixo exibem as instruções de uso
 
 ![Foto](./info.png)
+
+### Login
+
+Use as credenciais abaixo:
+
+```
+    login = EC4
+    senha = EC4
+```
